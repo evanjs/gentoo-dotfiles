@@ -1,0 +1,472 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;                  Icon Collection                     ;;;;;;;
+;;;;;;     ♟ ♞ ♝ ♜ ♛ ♚                    ;;;;;;;
+;;;;;;       ─ │                      ;;;;;;;
+;;;;;;                       ;;;;;;;
+;;;;;;                     🔎     ;;;;;;;
+;;;;;;                     ↵       ;;;;;;;
+;;;;;;        ⚡✓ ✘  🌞          ;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;         Fonts you will need                      ;;;;;;;;;
+;;;;;;;;      --- ttf-font-awesome                        ;;;;;;;;;
+;;;;;;;;      --- ttf-material-icons                      ;;;;;;;;;
+;;;;;;;;      --- ttf-fira-code                           ;;;;;;;;;
+;;;;;;;;      --- nerd-fonts-complete                     ;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[colors]
+background = #1b181b
+foreground = #bfc7d5
+yellow = #ffcb6b
+black = #073642
+white = #bfc7d5
+red = #ac4142
+green = #a9c77d
+blue = #82aaff
+magenta = #c792ea
+cyan = #89ddff
+
+[bar/master]
+width = 100%
+height = 40
+separator = " "
+background = ${colors.background}
+foreground = ${colors.foreground}
+underline-size = 0
+overline-size = 0
+font-0 = "DejaVu Sans Mono:pixelsize=15:antialias=false;1"
+font-1 = "FontAwesome:pixelsize=15:antialias=false;1"
+font-2 = "MaterialIcons-Regular:size=15:antialias=false;1"
+font-3 = "Pomicons-Regular:size=15:antialias=false;1"
+
+[bar/top]
+monitor = HDMI-A-0
+inherit = bar/master
+modules-left = previous play pause next music 
+modules-center = title
+modules-right = weather trash filesystem network ram cpu temperature compton volume xkeyboard time rofi powermenu
+
+padding-right = 1
+
+[module/ovpn]
+type = internal/network
+interface = enp2s0
+interval = 3.0
+exec-if = pgrep openvpn
+
+format-connected-padding = 1
+format-disconnected-padding = 1
+
+format-connected = <label-connected>
+
+label-connected = 
+label-connected-foreground = ${colors.cyan}
+
+label-disconnected = 
+label-disconnected-foreground = ${colors.red}
+
+[module/pavolume]
+type = custom/script
+interval = 2
+exec = ~/.config/polybar/pavolume.sh
+
+click-right = exec pavucontrol
+click-left = ~/.config/polybar/pavolume.sh --togmute
+scroll-up = ~/.config/polybar/pavolume.sh --up
+scroll-down = ~/.config/polybar/pavolume.sh --down
+
+label = %output%
+label-foreground = ${colors.yellow}
+format-padding = 1
+
+[module/temperature]
+type = internal/temperature
+
+thermal-zone = 2
+
+format = <ramp> <label>
+format-padding = 1
+
+label-foreground = ${colors.green}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+
+ramp-foreground = ${colors.green}
+
+[module/network]
+type = internal/network
+interface = enp2s0
+ping-interval = 3
+accumlate-stats = true
+label-connected =  
+label-connected-foreground = ${colors.green}
+label-disconnected = 
+label-disconnected-foreground = ${colors.red}
+label-padding = 1
+
+[module/title]
+type = internal/xwindow
+label = %title%
+label-maxlen = 75
+
+[module/ram]
+type = internal/memory
+interval = 3
+
+label-foreground = ${colors.blue}
+label-padding = 1
+format-prefix = ""
+format-prefix-foreground = ${colors.blue}
+format-padding = 1
+
+[module/cpu]
+type = internal/cpu
+interval = 1
+
+label-foreground = ${colors.cyan}
+label-padding = 1
+format-prefix = ""
+format-prefix-foreground = ${colors.cyan}
+format-padding = 1
+
+[module/wm]
+type = internal/i3
+enable-click = true
+enable-scroll = false
+strip-wsnumbers = true
+
+format-padding = 1
+label-focused-foreground = ${colors.magenta}
+label-focused-padding = 1
+
+label-unfocused-padding = 1
+
+label-visible-padding = 1
+
+label-urgent-foreground = ${colors.red}
+label-urgent-padding = 1
+
+[module/time]
+type = internal/date
+interval = 5
+label-foreground = ${colors.magenta}
+date =
+date-alt = " %Y-%m-%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-prefix = 
+format-prefix-foreground = ${colors.magenta}
+;format-underline = #0a6cf5
+
+label = %date% %time%
+
+
+[module/mpd]
+type                  = internal/mpd
+ 
+label-song            =   %artist% - %title% - %album%
+label-song-maxlen     = 100
+label-song-ellipsis   = true
+ 
+format-online = <label-song><toggle>
+# <icon-prev>    <icon-seekb>  <toggle>  <icon-seekf>    <icon-next>     <icon-random>  <icon-repeat>
+ 
+label-song-foreground = ${colors.cyan}
+label-padding = 1
+label-song-background = ${colors.background}
+icon-pause-background = ${self.label-song-background}
+icon-play-background  = ${self.label-song-background}
+icon-pause-foreground = ${self.label-song-foreground}
+icon-play-foreground  = ${self.label-song-foreground}
+ 
+label-song-padding = 2
+icon-pause-padding-right = 2
+icon-play-padding-right = 2
+ 
+icon-prev  = 
+icon-seekb = 
+icon-stop  = 
+icon-pause = 
+icon-play  = 
+icon-next  = 
+icon-seekf = 
+ 
+icon-random = 
+icon-repeat = 
+toggle-off-foreground = ${colors.grey}
+toggle-on-foreground  = ${colors.red}
+ 
+[module/powermenu]
+type = custom/menu
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = ${colors.cyan}
+label-close =  cancel
+label-close-foreground = ${colors.red}
+label-separator = " | "
+label-separator-foreground = ${colors.blue}
+
+
+menu-0-0 = restart
+menu-0-0-exec = menu-open-1
+menu-0-1 =  shutdown
+menu-0-1-exec = menu-open-2
+
+menu-1-0 =  cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 =  restart
+menu-1-1-exec = systemctl reboot
+
+menu-2-0 =  shutdown
+menu-2-0-exec = systemctl poweroff
+menu-2-1 =  cancel
+menu-2-1-exec = menu-open-0
+
+[module/powermenu2]
+type = custom/menu
+
+label-open =
+label-open-padding-left = 1
+label-open-padding-right = 1
+label-open-foreground = #3a3c61
+label-open-background = #ed4781
+label-close = 
+label-close-foreground = #e88e2c
+label-close-background = #3a3c61
+label-separator =|
+label-separator-foreground = #2de0a7
+label-separator-background = #3a3c61
+label-padding = 1
+
+menu-0-0 = restart
+menu-0-0-exec = menu-open-1
+menu-0-1 = shutdown
+menu-0-1-exec = menu-open-2
+menu-0-2 =
+menu-0-2-exec = menu-open-3
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 =
+menu-1-1-exec = systemctl reboot
+
+menu-2-0 =
+menu-2-0-exec = systemctl poweroff
+menu-2-1 =
+menu-2-1-exec = menu-open-0
+
+menu-3-0 =
+menu-3-0-exec =  slimlock 
+menu-3-1 =
+menu-3-1-exec = menu-open-0
+
+
+[module/xkeyboard]
+type = internal/xkeyboard
+blacklist-0 = num lock
+label-foreground = ${colors.cyan}
+format-prefix = " "
+format-prefix-foreground = ${colors.blue}
+;format-prefix-underline = ${colors.secondary}
+
+label-layout = %layout%
+;label-layout-underline = ${colors.secondary}
+
+label-indicator-padding = 2
+label-indicator-margin = 1
+label-indicator-background = ${colors.cyan}
+;label-indicator-underline = ${colors.secondary}
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+mount-0 = /
+;mount-1 = /run/media/dobbie/Music
+label-padding = 0
+label-mounted =  %mountpoint%:%percentage_used%%
+label-mounted-foreground = ${colors.red}
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.red}
+
+[module/altvolume]
+type = internal/volume
+
+format-volume = <label-volume> <bar-volume>
+label-volume = "  "
+label-volume-foreground = ${root.foreground}
+
+format-muted-prefix = "  "
+format-muted-foreground = ${colors.red}
+label-muted = muted
+
+padding-top = 14
+
+bar-volume-width = 10
+bar-volume-foreground-0 = ${colors.blue}
+bar-volume-foreground-1 = ${colors.blue}
+bar-volume-foreground-2 = ${colors.blue}
+bar-volume-foreground-3 = ${colors.blue}
+bar-volume-foreground-4 = ${colors.blue}
+bar-volume-foreground-5 = ${colors.green}
+bar-volume-foreground-6 = ${colors.green}
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-indicator-font = 2
+bar-volume-fill = ─
+bar-volume-fill-font = 2
+bar-volume-empty = ─
+bar-volume-empty-font = 2
+bar-volume-empty-foreground = ${colors.red}
+
+[module/updates]
+type = custom/script
+exec = ~/.bin/update
+format = <label>
+label =  
+label-padding = 1
+format-padding = 1
+tail = true
+interval = 90
+label-foreground = ${colors.green}
+
+[module/altpkg]
+type = custom/script
+interval = 1200
+format = <label>
+label-foreground = ${colors.green}
+label-padding = 1
+;format-underline = #dc322f
+format-padding = 1
+format-prefix-foreground = ${colors.cyan}
+label =  "%output:0:30%"
+exec = .config/polybar/pkg.sh
+exec-if = "ping -q -w 2 -c 1 176.34.135.167 > /dev/null"
+
+[module/pkg]
+type = custom/script
+interval = 20
+format = <label>
+format-underline = #dc322f
+format-padding = 1
+format-prefix-foreground = ${colors.yellow}
+label =  "%output:0:30%"
+label-foreground = ${colors.yellow}
+exec = .config/polybar/pkg.sh
+exec-if = "ping -q -w 2 -c 1 176.34.135.167 > /dev/null"
+
+[module/music]
+type = custom/script
+interval = 2
+
+label = %output:0:305:...%
+label-padding = 1
+exec = ~/.config/polybar/mpris.sh
+
+[module/compton]
+type = custom/script
+
+exec = ~/.config/polybar/compton.sh
+click-left = ~/.config/polybar/compton-toggle.sh
+interval = 5
+
+[module/trash]
+interval = 1
+type = custom/script
+exec = ~/.config/polybar/trash
+format-prefix = "  "
+format-prefix-foreground = ${colors.blue}
+format-spacing = 1
+click-right = rm -rf ~/.local/share/Trash/files/*
+click-left = exo-open --launch FileManager ~/.local/share/Trash/files
+label-foreground = ${colors.blue}
+label-padding = 0
+
+[module/weather]
+type = custom/script
+interval = 10
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.magenta}
+label-foreground = ${colors.magenta}
+label-padding = 1
+exec = ~/.config/polybar/weather
+
+[module/volume]
+type = internal/volume
+master-mixer = Master
+format-volume = <label-volume> <bar-volume>
+label-padding = 1
+label-volume = ""
+label-volume-foreground = ${colors.yellow}
+format-muted-prefix = " "
+format-muted-foreground = ${colors.red}
+format-spacing = 1
+label-muted = sound muted
+bar-volume-width = 10
+bar-volume-foreground-0 = ${colors.yellow}
+bar-volume-foreground-1 = ${colors.yellow}
+bar-volume-foreground-2 = ${colors.yellow}
+bar-volume-foreground-3 = ${colors.yellow}
+bar-volume-foreground-4 = ${colors.red}
+bar-volume-foreground-5 = ${colors.red}
+bar-volume-foreground-6 = ${colors.red}
+bar-volume-gradient = false
+bar-volume-indicator = ""
+bar-volume-indicator-font = 1
+bar-volume-indicator-foreground = ${colors.yellow}
+bar-volume-fill = ""
+bar-volume-fill-font = 1
+bar-volume-empty = ""
+bar-volume-empty-font = 1
+bar-volume-empty-foreground = ${colors.foreground}
+
+
+[module/rofi]
+type = custom/script
+exec = echo ""
+click-left = rofi -show run
+
+[module/play]
+type = custom/script
+exec = python3 ~/.config/polybar/Play.py
+format-padding = 1
+interval = 2
+format = <label>
+format-foreground = ${colors.cyan}
+format-background = ${colors.background}
+click-left = playerctl play
+
+[module/next]
+type = custom/script
+exec = echo 
+format-padding = 1
+format = <label>
+format-foreground = ${colors.green}
+format-background = ${colors.background}
+click-left = playerctl next
+
+[module/previous]
+type = custom/script
+exec = echo 
+format-padding = 1
+format = <label>
+format-foreground = ${colors.green}
+format-background = ${colors.background}
+click-left = playerctl previous
+
+[module/pause]
+type = custom/script
+exec = python3 ~/.config/polybar/Pause.py
+format-padding = 1
+format = <label>
+interval = 2
+format-foreground = ${colors.red}
+format-background = ${colors.background}
+click-left = playerctl pause

@@ -1,0 +1,877 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;                                                       ;;;;;;;
+;;;;;;      ♟ ♞ ♝ ♜ ♛ ♚                   				 ;;;;;;;
+;;;;;;        ─ │                      				 ;;;;;;;
+;;;;;;                             				 ;;;;;;;
+;;;;;;                             			 ;;;;;;;
+;;;;;;                      ↵      		 ;;;;;;;
+;;;;;;         ⚡✓ ✘  🌞                		 ;;;;;;;
+;;;;;;             ➤ ─              			 ;;;;;;;
+;;;;;;       🔥 👌 ( ͡° ͜ʖ ͡°)                     ;;;;;;;
+;;;;;;              ○ ●        				 ;;;;;;;
+;;;;;;                     	         ;;;;;;;
+;;;;;;           										 ;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[colors]
+background = #111111
+background-alt = #81A2BE
+foreground = #81A2BE
+foreground-alt = #81A2BE
+:foreground = #454545
+red = #CC6666
+yellow = #F0C674
+green = #B3BB67
+blue = #7FA0BC
+
+[bar/barr]
+monitor = ${env:MONITOR:HDMI-A-0}
+width = 100%
+height = 30
+;offset-x = 5%
+;offset-y = 1%
+;radius = 6.0
+fixed-center = true
+bottom = false
+background = #2B303B
+;(uncomment for transparency)background = #952B303B
+;background = ${colors.background}
+foreground = ${colors.foreground}
+line-size = 0
+;line-color = #f00
+border-bottom-size = 2
+border-bottom-color = #81A2BE
+border-top-size = 0
+border-top-color = #81A2BE
+;(uncomment for transparency)border-color = #952B303B
+;border-color = ${colors.background} 
+padding-left = 1
+padding-right = 1
+module-margin-left = 1
+module-margin-right = 1
+;locale = fr_FR.UTF-8
+font-0 = Roboto Condensed:size=10;1
+font-1 = unifont:fontformat=truetype:size=12:antialias=false;0
+font-2 = FontAwesome:size=15;1
+modules-left = previous play pause next music2
+;modules-left = i3
+modules-center = weather
+modules-right = temp cpu memory eth kernel rofi xkeyboard network volume time menu
+;modules-left = menu i3 clock volume network xkeyboard rofi eth memory cpu temp
+;tray-position = 
+;tray-padding = 2
+;tray-background = ${colors.background-alt}
+;tray-transparent = true
+;tray-offset-x = 
+;tray-detached = false
+;tray-maxsize = 24
+
+[module/browser]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = exo-open --launch WebBrowser &
+
+[module/fx]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = firefox &
+
+[module/fm]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = dolphin &
+click-right = gksu dolphin &
+
+[module/scrot]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = scrot %F-%S_$wx$h_scrot.png -e 'mv $f ~/scrot' &
+
+[module/term]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = konsole &
+click-right = urxvt &
+
+[module/editor]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = atom &
+click-right = idea &
+
+[module/spotify]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = spotify --force-device-scale-factor=1.5 
+
+[module/steam]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = steam-runtime
+
+
+[module/torr]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = deluge &
+click-right = transmission-gtk &
+
+[module/clip]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = diodon
+
+[module/email]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = evolution &
+
+[module/lock]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = ~/.config/i3/i3lock-color.sh &
+
+[module/chrome]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = chromium &
+
+[module/music]
+type = custom/text
+content = 
+content-foreground = ${colors.foreground}
+click-left = amarok
+
+[module/workspace]
+type = custom/script
+interval = 1
+label = %{A4:wmctrl -s "$(($(xprop -root _NET_CURRENT_DESKTOP | cut -d '=' -f 2 | cut -d ' ' -f 2)+1))":}%{A5:wmctrl -s "$(($(xprop -root _NET_CURRENT_DESKTOP | cut -d '=' -f 2 | cut -d ' ' -f 2)-1))":}%output% %{A}%{A}
+exec = echo "$(($(xprop -root _NET_CURRENT_DESKTOP | cut -d '=' -f 2 | cut -d ' ' -f 2)+1))"
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-padding = 1
+
+[module/window_count]
+type = custom/script
+interval = 1
+label = %{A1:rofi -modi -lines 7 -columns 2 -location 1 -xoffset 3 -show run:}%output% %{A}
+exec = echo "$(wmctrl -l | wc -l)"
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-padding = 1
+
+[module/skippy]
+type = custom/script
+exec = echo "  "
+click-left = skippy-xd --toggle-window-picker
+label-foreground = ${colors.foreground}
+;label-background = ${colors.background-alt}
+format-padding = 1
+
+[module/xtitle]
+type = internal/xwindow
+interval = 1
+label = %title%
+label-maxlen = 100 label = %{A1:skippy-xd --toggle-window-picker:}   %output%  %{A}
+exec = echo "$(xtitle)"
+format = <label>
+format-backround = #ooffffff
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground}
+format-padding = 1
+
+[module/mpd]
+type = internal/mpd
+format-online = <icon-prev> <icon-stop> <toggle> <icon-next> <label-song>
+format-online-prefix = " "
+format-online-prefix-foreground = ${colors.foreground-alt}
+fomat-online-foreground = ${colors.blue}
+format-online-background = ${colors.background-alt}
+format-online-padding = 1
+icon-play = 
+icon-pause = 
+icon-stop = 
+icon-prev = 
+icon-next = 
+;icon-play = 
+;icon-pause = 
+;icon-stop = 
+;icon-prev = 
+;icon-next = 
+;icon-random = 
+label-song = %title% - %artist% - %album%
+label-song-maxlen = 75
+label-song-ellipsis = true
+label-padding = 1
+toggle-on-foreground = ${colors.foreground}
+toggle-off-foreground = ${colors.foreground-alt}
+
+[module/xkeyboard]
+type = internal/xkeyboard
+blacklist-0 = num lock
+format = <label-layout> <label-indicator>
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+label-layout = %layout%
+label-indicator-padding = 1
+label-indicator-margin = 1
+label-indicator-foreground = ${colors.red}
+label-indicator-background = ${colors.background} 
+
+
+
+[module/cpu]
+type = internal/cpu
+interval = 1
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+label = %{A1:urxvt --geometry 150x30 -e htop:}%percentage%%%{A}
+
+[module/memory]
+type = internal/memory
+interval = 3
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+label = %{A1:urxvt --geometry 150x30 -e htop:}%percentage_used%%%{A}
+
+[module/filesystem]
+type = internal/fs
+
+; Mountpoints to display
+mount-0 = /
+mount-1 = /boot
+mount-2 = /var/tmp/portage
+
+format-mounted = <label-mounted>
+format-unmounted = <label-unmounted>
+
+label-mounted = %fsname%: %free% free (%percentage_free%%)
+
+interval = 10
+
+fixed-values = true
+
+spacing = 4
+format-padding = 2
+
+;[module/date]
+;type = custom/script
+;interval = 60
+;exec = echo "$(date +%a) $(date +%d) $(date +%b)"
+;format = <label>
+;format-prefix = " "
+;format-prefix-foreground = ${colors.foreground-alt}
+;label = %{A1:gsimplecal &:}%output%%{A}
+
+[module/clock]
+type = custom/script
+interval = 5
+exec = echo "$(date +%R)"
+;exec = echo "$(date +%H:%M:%S)"
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+label = %{A1:gsimplecal &:}%output%%{A}
+format-padding = 1
+
+[module/coinbase]
+type = custom/script
+interval = 5
+exec = ~/.config/polybar/coinbase
+format-padding = 3
+
+[module/time]
+type = internal/date
+interval = 5
+label-foreground = ${colors.foreground}
+date = " %A, %B %d, %Y"
+date-alt = " %Y-%m-%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-prefix = 
+format-prefix-foreground = ${colors.foreground}
+;format-underline = #0a6cf5
+
+label = %date% %time%
+
+[module/volume]
+type = internal/volume
+format-volume = <ramp-volume> <label-volume>
+label-volume = %percentage%%
+label-volume-foreground = ${root.foreground}
+format-muted = <label-muted>
+format-muted-foreground = ${colors.foreground-alt}
+label-muted =  mute
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-foreground = ${colors.foreground-alt}
+format-padding = 1
+
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = AC
+full-at = 98
+format-charging = <animation-charging> <label-charging> 
+format-discharging = <ramp-capacity> <label-discharging>
+format-full-prefix = " "
+format-full-prefix-foreground = ${colors.blue}
+ramp-capacity-0 = 
+ramp-capacity-0-foreground = ${colors.red}
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+ramp-capacity-foreground = ${colors.foreground-alt}
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-foreground = ${colors.foreground-alt}
+animation-charging-framerate = 750
+
+[module/networkmanager]
+type = custom/text
+content = net 
+content-foreground = ${colors.foreground}
+click-left = networkmanager_dmenu
+format-padding = 1
+
+[module/eth]
+type = internal/network
+interface = eno1
+interval = 3.0
+format-connected = <label-connected>
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.foreground-alt}
+format-disconnected = <label-disconnected>
+label-connected = %{A1:networkmanager_dmenu:}%downspeed%%{A}
+label-connected-foreground = ${colors.foreground}
+label-disconnected = no connection
+format-padding = 3
+
+[module/wlan]
+type = internal/network
+interface = wlan0
+interval = 3.0
+format-connected = <label-connected>
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.foreground-alt}
+format-disconnected = <label-disconnected>
+label-connected = %{A1:networkmanager_dmenu:}%downspeed%%{A}
+label-connected-foreground = ${colors.foreground}
+label-disconnected = 
+
+[module/mail]
+type = custom/script
+interval = 30
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+exec = ~/.config/polybar/mail
+click-left = evolution &
+
+[module/play]
+type = custom/script
+exec = python3 ~/.config/polybar/Play.py
+format-padding = 1
+interval = 2
+format = <label>
+format-foreground = ${colors.foreground}
+;format-background = ${colors.foreground-alt}
+click-left = playerctl play
+
+[module/next]
+type = custom/script
+exec = echo 
+format-padding = 1
+format = <label>
+format-foreground = ${colors.foreground}
+;format-background = ${colors.foreground-alt}
+click-left = playerctl next
+
+[module/previous]
+type = custom/script
+exec = echo 
+format-padding = 1
+format = <label>
+format-foreground = ${colors.foreground}
+;format-background = ${colors.foreground-alt}
+click-left = playerctl previous
+
+[module/pause]
+type = custom/script
+exec = python3 ~/.config/polybar/Pause.py
+format-padding = 1
+format = <label>
+interval = 2
+format-foreground = ${colors.foreground}
+;format-background = ${colors.foreground-alt}
+click-left = playerctl pause
+
+[module/kernel]
+type = custom/script
+exec = ~/.config/polybar/gkern.sh
+
+[module/music2]
+type = custom/script
+interval = 2
+label = %output:0:305:...%
+label-padding = 1
+exec = ~/.config/polybar/mpris.sh
+
+[module/menu]
+type = custom/menu
+
+format-spacing = 1
+label-open = "  "
+label-open-foreground = ${colors.foreground}
+label-close = "  "
+label-close-foreground = ${colors.foreground}
+label-separator = "│"
+label-separator-foreground = ${colors.foreground-alt}
+menu-0-0 = Favs
+menu-0-0-exec = menu-open-1
+menu-0-1 = Sites
+menu-0-1-exec = menu-open-2
+menu-0-2 = System
+menu-0-2-exec = menu-open-3
+menu-0-3 = Power
+menu-0-3-exec = menu-open-4
+
+menu-1-0 = "  "
+menu-1-0-exec = chromium
+menu-1-1 = "  "
+menu-1-1-exec = konsole
+menu-1-2 = "  "
+menu-1-2-exec = dolphin
+menu-1-3 = "  "
+menu-1-3-exec = kate
+
+menu-2-0 = "  "
+menu-2-0-exec = chromium https://crunchyroll.com
+menu-2-1 = "  "
+menu-2-1-exec = "chromium https://reddit.com"
+menu-2-2 = "  "
+menu-2-2-exec = "chromium https://facebook.com"
+
+menu-4-0 = "  "
+menu-4-0-exec = ~/.config/i3/i3lock-color.sh
+menu-4-1 = "  "
+menu-4-1-exec = systemctl reboot
+menu-4-2 = "  "
+menu-4-2-exec = systemctl poweroff
+
+
+[module/powermenu]
+type = custom/menu
+format-spacing = 0
+label-open = 
+label-open-font = 2
+label-open-foreground = ${colors.red}
+label-close = 
+label-close-foreground = ${colors.foreground}
+label-separator = |
+label-separator-foreground = ${colors.foreground-alt}
+menu-0-0 = 
+menu-0-0-foreground = ${colors.blue}
+menu-0-0-exec = menu-open-1
+menu-0-1 = 
+menu-0-1-foreground = ${colors.red}
+menu-0-1-exec = menu-open-2
+menu-1-0 = restart?
+menu-1-0-exec = /sbin/reboot
+menu-1-1 = 
+menu-1-1-exec = menu-open-0
+menu-2-0 = 
+menu-2-0-exec = menu-open-0
+menu-2-1 = shutdown?
+menu-2-1-exec = /sbin/poweroff
+
+
+[module/mpd2]
+type                  = internal/mpd
+label-song            = %artist% - %title%
+label-song-maxlen     = 65
+label-song-ellipsis   = true
+format-online = <icon-prev> <icon-stop> <toggle> <icon-next>  <icon-random> <label-song> <bar-progress>
+label-song-foreground = ${colors.foreground}
+label-padding = 1
+label-song-background = ${colors.background}
+icon-pause-background = ${self.label-song-background}
+icon-play-background  = ${self.label-song-background}
+icon-pause-foreground = ${self.label-song-foreground}
+icon-stop-foreground = ${self.label-song-foreground}
+icon-play-foreground  = ${self.label-song-foreground}
+label-song-padding = 1
+icon-prev  = ""
+icon-stop  = ""
+icon-pause = ""
+icon-play  = ""
+icon-next  = ""
+icon-random = ""
+toggle-off-foreground = ${colors.foreground}
+toggle-on-foreground  = ${colors.red}
+bar-progress-width = 20
+bar-progress-indicator = 
+bar-progress-fill = 
+bar-progress-empty = 
+bar-progress-fill-foreground = ${colors.foreground}
+bar-progress-indicator-foreground = ${colors.red}
+
+
+[module/pkg]
+type = custom/script
+label-foreground = ${colors.foreground}
+;label-background = ${colors.background}
+exec = .config/polybar/pkg.sh
+exec-if = "ping -c 1 8.8.8.8 > /dev/null"
+click-left = .config/polybar/update.sh
+click-right = .config/polybar/aur-update.sh
+label-padding = 0
+interval = 100
+tail = true
+
+[module/weather]
+type = custom/script
+interval = 10
+format = <label>
+format-prefix = "   "
+format-prefix-foreground = ${colors.foreground}
+label-foreground = ${colors.foreground}
+label-padding = 1
+exec = ~/.config/polybar/weather
+format-padding = 1
+
+[module/rofi]
+type = custom/script
+exec = echo ""
+click-left = rofi-launcher
+format-padding = 1
+
+[module/workspace-icon]
+type = internal/i3
+pin-workspaces = true
+strip-wsnumbers = true
+index-sort = true
+enable-click = true
+enable-scroll = false
+wrapping-scroll = false
+reverse-scroll = false
+fuzzy-match = true
+ws-icon-0 = 1;
+ws-icon-1 = 2;
+ws-icon-2 = 3;
+ws-icon-3 = 4;
+ws-icon-4 = 5;
+ws-icon-5 = 6;
+ws-icon-6 = 7;
+ws-icon-7 = 8;
+ws-icon-8 = 9;
+ws-icon-9 = 10;
+ws-icon-default = 
+format = <label-state>
+label-mode = %mode%
+label-mode-padding = 2
+label-mode-background = ${colors.red}
+label-focused = %icon%  %name%
+label-focused-foreground = ${colors.foreground}
+label-focused-background = ${colors.background}
+label-focused-underline = ${colors.red}
+label-focused-padding = 2
+label-unfocused = %icon%  %name%
+label-unfocused-padding = 2
+label-visible = %icon%  %name%
+label-visible-underline = ${colors.foreground}
+label-visible-padding = 2
+label-urgent = %icon%  %name%
+label-urgent-foreground = ${colors.foreground-alt}
+label-urgent-background = ${colors.red}
+label-urgent-padding = 2
+format-padding = 1
+
+[module/workspace-box]
+type = internal/i3
+format = <label-state><label-mode>
+pin-workspaces = true
+strip-wsnumbers = true
+index-sort = true
+enable-click = true
+enable-scroll = false
+wrapping-scroll = false
+reverse-scroll = false
+fuzzy-match = true
+label-mode-padding = 1
+label-mode = %mode%
+label-mode-foreground = ${colors.foreground}
+label-mode-background = ${colors.background}
+label-focused = ""
+label-focused-foreground = ${colors.foreground}
+label-focused-background = ${colors.background}
+label-focused-padding = 1
+label-unfocused = ""
+label-unfocused-foreground = ${colors.foreground}
+label-unfocused-background = ${colors.foreground-alt}
+label-unfocused-padding = 1
+label-urgent = ""
+label-urgent-foreground = ${colors.red}
+label-urgent-background = ${colors.foreground-alt}
+label-urgent-padding = 1
+label-visible = ""
+label-visible-foreground = ${colors.foreground}
+label-visible-background = ${colors.foreground-alt}
+label-visible-padding = 1
+format-padding = 1
+
+[module/temp]
+type = internal/temperature
+
+thermal-zone = 2
+
+format = <ramp> <label>
+format-padding = 1
+
+label-foreground = ${colors.foreground}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+
+ramp-foreground = ${colors.foreground}
+
+
+[module/updates]
+type = custom/script
+exec = ~/.bin/update
+format = <label>
+label =  
+label-padding = 1
+format-padding = 1
+tail = true
+interval = 90
+label-foreground = ${colors.foreground}
+
+
+[module/altpkg]
+type = custom/script
+interval = 1200
+format = <label>
+label-foreground = ${colors.foreground}
+label-padding = 1
+;format-underline = #dc322f
+format-padding = 1
+format-prefix-foreground = ${colors.foreground}
+label =  "%output:0:30%"
+exec = .config/polybar/pkg.sh
+
+exec-if = "ping -q -w 2 -c 1 176.34.135.167 > /dev/null"
+
+[module/network]
+type = custom/script
+;label-background = ${colors.background}
+exec = $HOME/.config/polybar/network.sh
+click-left = networkmanager_dmenu
+click-right = networkmanager_dmenu
+label-padding = 1
+interval = 1
+tail = true
+
+[module/clock2]
+type = internal/date
+format = <label>
+label-padding-right = 0
+format-prefix = 
+format-prefix-foreground = ${colors.foreground-alt}
+;format-background = ${colors.background}
+;format-foreground = ${colors.foreground}
+interval = 2
+time = %H:%M
+label = %{A1:gsimplecal &:} %time%%{A}
+
+[module/window_count1]
+type = custom/script
+interval = 2
+label = "%{A1:skippy-xd --activate-window-picker:}   %output%  %{A}"
+exec = echo "$(($(wmctrl -l -i | wc -l)-1))"
+format = <label>
+format-prefix = "   "
+format-prefix-foreground = ${colors.foreground-alt}
+format-padding = 0
+
+[module/workspaces]
+type = internal/xworkspaces
+enable-click = true
+enable-scroll = true
+format-padding = 0
+Additional formatting
+icon-0 = 1;
+icon-1 = 2;
+icon-2 = 3;
+icon-3 = 4;
+icon-4 = 5;
+icon-5 = 6;
+icon-6 = 7;
+icon-7 = 8;
+icon-8 = 9;
+icon-9 = 10;
+;icon-default = 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[module/i3]
+type = internal/i3
+
+; Only show workspaces defined on the same output as the bar
+;
+; Useful if you want to show monitor specific workspaces
+; on different bars
+;
+; Default: false
+pin-workspaces = true
+
+; This will split the workspace name on ':'
+; Default: false
+strip-wsnumbers = true
+
+; Sort the workspaces by index instead of the default
+; sorting that groups the workspaces by output
+; Default: false
+index-sort = true
+
+; Create click handler used to focus workspace
+; Default: true
+enable-click = true
+
+; Create scroll handlers used to cycle workspaces
+; Default: true
+enable-scroll = false
+
+; Wrap around when reaching the first/last workspace
+; Default: true
+wrapping-scroll = false
+
+; Set the scroll cycle direction
+; Default: true
+reverse-scroll = false
+
+; Use fuzzy (partial) matching on labels when assigning
+; icons to workspaces
+; Example: code;♚ will apply the icon to all workspaces
+; containing 'code' in the label
+; Default: false
+fuzzy-match = true
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-focused = %index%
+label-focused-foreground = #ffffff
+label-focused-background = #3f3f3f
+label-focused-underline = #fba922
+label-focused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+; Default: %icon%  %name%
+label-unfocused = %index%
+label-unfocused-padding = 4
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+format = <label-state>
+
+label-active = "  %icon% %name%  "
+label-active-foreground = ${colors.blue}
+;label-active-background = ${colors.b-alt}
+label-active-underline = ${colors.blue}
+
+label-occupied = "  %icon% %name%  "
+label-occupied-underline = ${colors.blue}
+;label-occupied-background = ${colors.b-alt}
+label-occupied-foreground = ${colors.foreground}
+
+label-urgent = "  %icon% %name%  "
+;label-urgent-foreground = ${colors.urgent}
+;label-urgent-background = ${colors.b-alt}
+;label-urgent-underline = ${colors.urgent}
+
+label-empty = "  %icon% %name%  "
+label-empty-foreground = ${colors.foreground}
+;label-empty-background = ${colors.b-alt}
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+
+;[global/wm]
+;margin-top = 0
+;margin-bottom = 0
+
+[bar/bottom]
+monitor = ${env:MONITOR:HDMI-A-0}
+width = 100%
+height = 30
+;offset-x = 5%
+;offset-y = 1%
+;radius = 6.0
+fixed-center = true
+bottom = true
+background = #2B303B
+;(uncomment for transparency)background = #952B303B
+;background = ${colors.background}
+foreground = ${colors.foreground}
+line-size = 0
+;line-color = #f00
+border-bottom-size = 2
+border-bottom-color = #81A2BE
+border-top-size = 0
+border-top-color = #81A2BE
+;(uncomment for transparency)border-color = #952B303B
+;border-color = ${colors.background}
+padding-left = 1
+padding-right = 1
+module-margin-left = 1
+module-margin-right = 1
+;locale = fr_FR.UTF-8
+font-0 = Roboto Condensed:size=10;1
+font-1 = unifont:fontformat=truetype:size=12:antialias=false;0
+font-2 = FontAwesome:size=15;1
+modules-left = i3
+;modules-left = i3
+modules-center = xtitle
+modules-right = filesystem coinbase
+;modules-left = menu i3 clock volume network xkeyboard rofi eth memory cpu temp
+;tray-position =
+;tray-padding = 2
+;tray-background = ${colors.background-alt}
+;tray-transparent = true
+;tray-offset-x =
+;tray-detached = false
+;tray-maxsize = 24

@@ -1,0 +1,13 @@
+#!/usr/bin/python
+
+from coinbase.wallet.client import Client
+
+api_key = "***REMOVED***"
+api_secret = "***REMOVED***"
+
+client = Client(api_key, api_secret)
+
+bal = client.get_primary_account().get("native_balance")
+btctousd = client.get_buy_price().get("amount")
+
+print(f'{bal} || USD {btctousd}')

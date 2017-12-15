@@ -188,10 +188,12 @@ bindsym $mod+r mode "resize"
 
 bindsym $mod+ctrl+l exec /home/evanjs/.config/i3/i3lock-color.sh
 
+bindsym Print exec --no-startup-id spectacle &
+
 for_window [class="^.*"] border pixel 0
 
-gaps inner 10
-gaps outer 5
+gaps inner 6
+gaps outer 3
 
 #exec /usr/bin/compton --config /home/evanjs/.compton.conf~.i3/config
 #exec compton

@@ -1,17 +1,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;                                                       ;;;;;;;
-;;;;;;      ♟ ♞ ♝ ♜ ♛ ♚                   				 ;;;;;;;
-;;;;;;        ─ │                      				 ;;;;;;;
-;;;;;;                             				 ;;;;;;;
-;;;;;;                             			 ;;;;;;;
-;;;;;;                      ↵      		 ;;;;;;;
+;;;;;;                                                      ;;;;;;;
+;;;;;;      ♟ ♞ ♝ ♜ ♛ ♚                       ;;;;;;;
+;;;;;;        ─ │                      ;;;;;;;
+;;;;;;                            	;;;;;;;
+;;;;;;                              ;;;;;;;
+;;;;;;                      ↵         ;;;;;;;
 ;;;;;;         ⚡✓ ✘  🌞                		 ;;;;;;;
 ;;;;;;             ➤ ─              			 ;;;;;;;
 ;;;;;;       🔥 👌 ( ͡° ͜ʖ ͡°)                     ;;;;;;;
 ;;;;;;              ○ ●        				 ;;;;;;;
 ;;;;;;                     	         ;;;;;;;
 ;;;;;;           										 ;;;;;;;
+;;;;;;                                                    ;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 [colors]
@@ -54,10 +55,10 @@ module-margin-right = 1
 font-0 = Roboto Condensed:size=10;1
 font-1 = unifont:fontformat=truetype:size=12:antialias=false;0
 font-2 = FontAwesome:size=15;1
-modules-left = previous play pause next music2
+;modules-left = previous play pause next mpd
 ;modules-left = i3
 modules-center = weather
-modules-right = temp cpu memory eth kernel rofi xkeyboard network volume time menu
+modules-right = temp cpu memory eth kernel updates network volume wtime menu
 ;modules-left = menu i3 clock volume network xkeyboard rofi eth memory cpu temp
 ;tray-position = 
 ;tray-padding = 2
@@ -123,8 +124,7 @@ click-left = steam-runtime
 type = custom/text
 content = 
 content-foreground = ${colors.foreground}
-click-left = deluge &
-click-right = transmission-gtk &
+click-left = delugeireless-networkclick-right = transmission-gtk &
 
 [module/clip]
 type = custom/text
@@ -255,8 +255,8 @@ type = internal/fs
 
 ; Mountpoints to display
 mount-0 = /
-mount-1 = /boot
-mount-2 = /var/tmp/portage
+;mount-1 = /boot
+;mount-2 = /var/tmp/portage
 
 format-mounted = <label-mounted>
 format-unmounted = <label-unmounted>
@@ -292,8 +292,8 @@ format-padding = 1
 
 [module/coinbase]
 type = custom/script
-interval = 5
-exec = ~/.config/polybar/coinbase
+interval = 10
+exec = ~/.config/polybar/python/coinbase
 format-padding = 3
 
 [module/time]
@@ -311,6 +311,15 @@ format-prefix-foreground = ${colors.foreground}
 ;format-underline = #0a6cf5
 
 label = %date% %time%
+
+[module/wtime]
+type = custom/script
+interval = 5
+label-foreground = ${colors.foreground}
+exec = ~/.config/polybar/wtime.php
+format-prefix = "  " 
+format-prefix-foreground = ${colors.foreground}
+
 
 [module/volume]
 type = internal/volume
@@ -364,22 +373,24 @@ format-connected = <label-connected>
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.foreground-alt}
 format-disconnected = <label-disconnected>
-label-connected = %{A1:networkmanager_dmenu:}%downspeed%%{A}
+;label-connected = %{A1:networkmanager_dmenu:}%downspeed%%{A}
+label-connected = %local_ip%}
 label-connected-foreground = ${colors.foreground}
 label-disconnected = no connection
 format-padding = 3
 
 [module/wlan]
 type = internal/network
-interface = wlan0
+interface = wlp2s0
 interval = 3.0
 format-connected = <label-connected>
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.foreground-alt}
 format-disconnected = <label-disconnected>
-label-connected = %{A1:networkmanager_dmenu:}%downspeed%%{A}
+;label-connected = %{A1:networkmanager_dmenu:}%downspeed%%{A}
+label-connected = %essid% %downspeed:9%
 label-connected-foreground = ${colors.foreground}
-label-disconnected = 
+label-disconnected = no wifi
 
 [module/mail]
 type = custom/script
@@ -431,6 +442,8 @@ click-left = playerctl pause
 [module/kernel]
 type = custom/script
 exec = ~/.config/polybar/gkern.sh
+tail = false
+interval = 1024
 
 [module/music2]
 type = custom/script
@@ -481,6 +494,17 @@ menu-4-1-exec = systemctl reboot
 menu-4-2 = "  "
 menu-4-2-exec = systemctl poweroff
 
+
+[module/pavolume]
+type = custom/script
+interval = 2
+label = %output%
+exec = ~/.config/polybar/pavolume.sh
+exec-if = pacmd list-sinks | grep -q available
+click-right = exec pavucontrol
+click-left = ~/.config/polybar/pavolume.sh --togmute
+scroll-up = ~/.config/polybar/pavolume.sh --up
+scroll-down = ~/.config/polybar/pavolume.sh --down
 
 [module/powermenu]
 type = custom/menu
@@ -661,9 +685,9 @@ ramp-foreground = ${colors.foreground}
 
 [module/updates]
 type = custom/script
-exec = ~/.bin/update
+exec = ~/.config/polybar/eix-updates
 format = <label>
-label =  
+format-prefix = " " 
 label-padding = 1
 format-padding = 1
 tail = true
@@ -830,9 +854,9 @@ screenchange-reload = true
 ;compositing-foreground = source
 ;compositing-border = over
 
-;[global/wm]
-;margin-top = 0
-;margin-bottom = 0
+[global/wm]
+margin-top = 0
+margin-bottom = 0
 
 [bar/bottom]
 monitor = ${env:MONITOR:HDMI-A-0}
@@ -843,18 +867,26 @@ height = 30
 ;radius = 6.0
 fixed-center = true
 bottom = true
+
+;;;;;;;;;;;;;
 background = #2B303B
-;(uncomment for transparency)background = #952B303B
 ;background = ${colors.background}
+
+;(uncomment for transparency)
+;background = #952B303B
+
+;(uncomment for transparency)
+;border-color = #952B303B
+;;;;;;;;;;;;;
+
 foreground = ${colors.foreground}
 line-size = 0
 ;line-color = #f00
-border-bottom-size = 2
+border-bottom-size = 0
 border-bottom-color = #81A2BE
-border-top-size = 0
+border-top-size = 2
 border-top-color = #81A2BE
-;(uncomment for transparency)border-color = #952B303B
-;border-color = ${colors.background}
+border-color = ${colors.background}
 padding-left = 1
 padding-right = 1
 module-margin-left = 1
@@ -866,8 +898,8 @@ font-2 = FontAwesome:size=15;1
 modules-left = i3
 ;modules-left = i3
 modules-center = xtitle
-modules-right = filesystem coinbase
-;modules-left = menu i3 clock volume network xkeyboard rofi eth memory cpu temp
+modules-right = wlan filesystem battery coinbase
+;modules-left = menu i3 clock pavolume network xkeyboard rofi eth memory cpu temp
 ;tray-position =
 ;tray-padding = 2
 ;tray-background = ${colors.background-alt}

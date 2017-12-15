@@ -1,0 +1,22 @@
+#!/usr/bin/python
+import locale
+from coinbase.wallet.client import Client
+
+locale.setlocale(locale.LC_MONETARY, 'en_US.utf8')
+
+api_key = "***REMOVED***"
+api_secret = "***REMOVED***"
+api_version = "2017-12-14"
+
+client = Client(api_key, api_secret)
+client.API_VERSION = api_version
+
+bal = client.get_primary_account().get("native_balance")
+fbal = str(bal)[3:]
+cfbal = locale.currency(float(fbal), grouping=True)
+
+btctousd = client.get_buy_price().get("amount")
+fbtctousd = locale.currency(float(btctousd), grouping=True)
+
+if "USD" in str(bal):
+    print(f' {cfbal} ||  {fbtctousd}')

@@ -23,7 +23,7 @@ exec_always --no-startup-id ~/.config/i3/nm-applet.sh &
 exec_always --no-startup-id ~/.config/i3/gnome-settings.sh &
 #exec_always --no-startup-id onedrived restart &
 exec_always --no-startup-id ~/.config/i3/dunst.sh &
-exec_always --no-startup-id ~/.config/i3/onedrived.sh &
+exec --no-startup-id ~/.config/i3/onedrived.sh &
 exec_always --no-startup-id polychromatic.sh &
 #exec_always --no-startup-id ~/.config/i3/redshift.sh 
 

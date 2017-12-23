@@ -11,12 +11,25 @@ api_version = "2017-12-14"
 client = Client(api_key, api_secret)
 client.API_VERSION = api_version
 
+accounts = client.get_accounts()
+bch_account = (b for b in accounts['data'] if b['balance']['currency'] == 'BCH').__next__()
+bch_bal = bch_account.get('native_balance')
+# aa = bch.__next__()
+# bb = aa.get('amount')
+# fbchbal = str(bch)
+fbchbal = str(bch_bal)[3:]
+cfbchbal = locale.currency(float(fbchbal), grouping=True)
+
 bal = client.get_primary_account().get("native_balance")
 fbal = str(bal)[3:]
 cfbal = locale.currency(float(fbal), grouping=True)
 
-btctousd = client.get_buy_price().get("amount")
+btctousd = client.get_spot_price().get("amount")
 fbtctousd = locale.currency(float(btctousd), grouping=True)
 
+bchtousd = client.get_spot_price(currency_pair='BCH-USD').get("amount")
+fbchtousd = locale.currency(float(bchtousd), grouping=True)
+
+
 if "USD" in str(bal):
-    print(f' {cfbal} ||  {fbtctousd}')
+    print(f' {cfbal} ||  {fbtctousd} ||| BCH {cfbchbal}')

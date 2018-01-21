@@ -1,15 +1,20 @@
 #!/usr/bin/python
 import locale
+import sys
 from coinbase.wallet.client import Client
 
 locale.setlocale(locale.LC_MONETARY, 'en_US.utf8')
 
 api_key = "***REMOVED***"
 api_secret = "***REMOVED***"
-api_version = "2017-12-14"
+#api_version = "2017-12-14"
 
-client = Client(api_key, api_secret)
-client.API_VERSION = api_version
+try:
+    client = Client(api_key, api_secret)
+    #client.API_VERSION = api_version
+except:
+    print("Error, Probably API version.")
+    sys.exit()
 
 accounts = client.get_accounts()
 bch_account = (b for b in accounts['data'] if b['balance']['currency'] == 'BCH').__next__()
@@ -30,6 +35,9 @@ fbtctousd = locale.currency(float(btctousd), grouping=True)
 bchtousd = client.get_spot_price(currency_pair='BCH-USD').get("amount")
 fbchtousd = locale.currency(float(bchtousd), grouping=True)
 
+totalbal = float(fbchbal) + float(fbal)
+ftotalbal = locale.currency(float(totalbal), grouping=True)
+
 
 if "USD" in str(bal):
-    print(f' {cfbal} ||  {fbtctousd} ||| BCH {cfbchbal}')
+    print(f' {cfbal} ||  {fbtctousd} ||| BCH {cfbchbal} |||| TOTAL: {ftotalbal} ')

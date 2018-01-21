@@ -3,13 +3,23 @@
 import urllib.request, json
 
 city = "Traverse City"
+#city = "Chicago"
 api_key = "***REMOVED***"
-units = "Metric"
-unit_key = "C"
 
-weather = eval(str(urllib.request.urlopen("http://api.openweathermap.org/data/2.5/weather?q={}&APPID={}&units={}".format(city, api_key, units)).read())[2:-1])
+units_metric = "Metric"
+units_us = "Imperial"
 
-info = weather["weather"][0]["description"].capitalize()
-temp = int(float(weather["main"]["temp"]))
+unit_key_c = "C"
+unit_key_f = "F"
 
-print("%s, %i °%s" % (info, temp, unit_key))
+
+
+weather_c = eval(str(urllib.request.urlopen(f"http://api.openweathermap.org/data/2.5/weather?q={city}&APPID={api_key}&units={units_metric}").read())[2:-1])
+
+weather_f = eval(str(urllib.request.urlopen(f"http://api.openweathermap.org/data/2.5/weather?q={city}&APPID={api_key}&units={units_us}").read())[2:-1])
+
+info_c = weather_c["weather"][0]["description"].capitalize()
+info_f = weather_f["weather"][0]["description"].capitalize()
+temp_c = int(float(weather_c["main"]["temp"]))
+temp_f = int(float(weather_f["main"]["temp"]))
+print("%s, %i °%s  /  %i °%s" % (info_c, temp_c, unit_key_c, temp_f, unit_key_f))

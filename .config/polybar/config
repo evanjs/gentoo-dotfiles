@@ -16,7 +16,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 [colors]
-background = #111111
+background = #2B303B
 background-alt = #81A2BE
 foreground = #81A2BE
 foreground-alt = #81A2BE
@@ -60,13 +60,13 @@ font-2 = FontAwesome:size=15;1
 modules-center = weather
 modules-right = temp cpu memory eth kernel updates network volume wtime menu
 ;modules-left = menu i3 clock volume network xkeyboard rofi eth memory cpu temp
-;tray-position = 
-;tray-padding = 2
-;tray-background = ${colors.background-alt}
+tray-position = left
+tray-padding = 2
+;tray-background = ${colors.background}
 ;tray-transparent = true
 ;tray-offset-x = 
 ;tray-detached = false
-;tray-maxsize = 24
+tray-maxsize = 24
 
 [module/browser]
 type = custom/text

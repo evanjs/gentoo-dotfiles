@@ -34,6 +34,7 @@ i3lock              \
 --indicator           \
 --timestr="%H:%M:%S"  \
 --datestr="%A, %m %Y" \
+--wrongtext="dumbass"
 
 # --blur 5
 # --veriftext="Drinking verification can..."

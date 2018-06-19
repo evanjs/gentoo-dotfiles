@@ -1,30 +1,16 @@
 -- -*- mode:haskell -*-
 module Main where
-{-# LANGUAGE UnicodeSyntax #-}
-{-# LANGUAGE OverloadedStrings #-}
-import Control.Monad.IO.Class
-import qualified Data.ByteString.Lazy as L
-import qualified Data.ByteString.Lazy.Char8 as Char8
-import Data.Char (isSpace)
-import qualified Graphics.UI.Gtk as G
-import Control.Monad.Trans (liftIO)
-import System.Taffybar.Compat.GtkLibs
-import System.Exit (ExitCode)
-import System.IO (hPutStr, hClose)
-import System.Process
-import Data.IORef
-import Text.Printf
+
 import System.Taffybar
-import qualified System.Taffybar.Context as C
 import System.Taffybar.Hooks
 import System.Taffybar.Information.CPU
 import System.Taffybar.Information.Memory
 import System.Taffybar.SimpleConfig
-import System.Taffybar.Util (logPrintF)
 import System.Taffybar.Widget
 import System.Taffybar.Widget.Generic.PollingGraph
 import System.Taffybar.Widget.Generic.PollingLabel
 import System.Taffybar.Widget.Util
+import System.Taffybar.Widget.Weather
 import System.Taffybar.Widget.Workspaces
 
 transparent = (0.0, 0.0, 0.0, 0.0)
@@ -57,7 +43,9 @@ cpuCfg = myGraphConfig
   , graphLabel = Just "cpu"
   }
 
-wcfg = (defaultWeatherConfig "KTVC") { weatherTemplate = "$tempF$ F / $tempC$ C - $skyCondition$" }
+
+{-wcfg = (defaultWeatherConfig "KMSN")-}
+  {-{ weatherTemplate = "$tempC$ C / $humidity$" }-}
 
 memCallback :: IO [Double]
 memCallback = do
@@ -68,27 +56,6 @@ cpuCallback = do
   (_, systemLoad, totalLoad) <- cpuLoad
   return [totalLoad, systemLoad]
 
-{-shellWidgetTooltpNew :: String -> String -> String -> Double -> TaffyIO G.Widget-}
-{-shellWidgetTooltipNew defaultStr cmd tooltipCmd interval = do-}
-  {-mString <- readCreateProcess (shell cmd) ""-}
-  {-tString <- readCreateProcess (shell tooltipCmd) ""-}
-  {-{-liftIO $ mString-}-}
-  {-{-liftIO $ tString-}-}
-  {-label <- pollingLabelNewWithTooltip defaultStr interval $ [mString, tString]-}
-  {-liftIO $ G.widgetShowAll $ label-}
-
-shellWidgetNew defaultStr cmd interval = do
-  label <- pollingLabelNew defaultStr interval $ stripStr $ readCreateProcess (shell cmd) ""
-  liftIO $ G.widgetShowAll $ label
-
-  return label
-
-stripStr :: IO String -> IO String
-stripStr ioString = do
-  str <- ioString
-  return $ rstrip $ str
-
-rstrip = reverse . dropWhile isSpace . reverse
 
 main = do
   let myWorkspacesConfig =
@@ -97,6 +64,7 @@ main = do
         , widgetGap = 0
         , showWorkspaceFn = hideEmpty
         }
+
       workspaces = workspacesNew myWorkspacesConfig
       cpu = pollingGraphNew cpuCfg 0.5 cpuCallback
       mem = pollingGraphNew memCfg 1 memCallback
@@ -104,18 +72,13 @@ main = do
       clock = textClockNew Nothing "%a %b %_d %r" 1
       layout = layoutNew defaultLayoutConfig
       windows = windowsNew defaultWindowsConfig
-      updates = shellWidgetNew "..." "echo -e \"Updates: $(eix -u# | wc -l)\"" 5
-      kernel = shellWidgetNew "..." "echo -e \"Cur: $(uname -r)\"" 86400 
-      newKernel = shellWidgetNew "..." "echo -e \"New: $(newkern)\"" 1800
-      weather = liftIO $ weatherNew wcfg 10
+      {-weather = weatherNew wcfg 10-}
           -- See https://github.com/taffybar/gtk-sni-tray#statusnotifierwatcher
           -- for a better way to set up the sni tray
       tray = sniTrayThatStartsWatcherEvenThoughThisIsABadWayToDoIt
-
-
       myConfig = defaultSimpleTaffyConfig
         { startWidgets =
-            workspaces : map (>>= buildContentsBox) [ layout, windows ]
+            workspaces : map (>>= buildContentsBox) [ layout, windows]
         , endWidgets = map (>>= buildContentsBox)
           [ batteryIconNew
           , clock
@@ -123,16 +86,11 @@ main = do
           , cpu
           , mem
           , net
-          , mpris2New
-          , updates
-          , kernel
-          , newKernel
-          , weather
           ]
         , barPosition = Top
         , barPadding = 10
         , barHeight = 50
-        , widgetSpacing = 8
+        , widgetSpacing = 0
         }
-  startTaffybar $ withBatteryRefresh $ withLogServer $ withToggleServer $
+  dyreTaffybar $ withBatteryRefresh $ withLogServer $ withToggleServer $
                toTaffyConfig myConfig

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+killall my-taffybar
+sleep 1
+/home/evanjs/.local/bin/my-taffybar

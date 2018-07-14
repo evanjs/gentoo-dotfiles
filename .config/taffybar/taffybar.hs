@@ -1,14 +1,14 @@
 -- -*- mode:haskell -*-
-module Main where
-{-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE OverloadedStrings #-}
+module Main where
+import Control.Monad
 import Control.Monad.IO.Class
 import qualified Data.ByteString.Lazy as L
-import qualified Data.ByteString.Lazy.Char8 as Char8
+import qualified Data.ByteString.Lazy.Char8 as Char
 import Data.Char (isSpace)
+import qualified Data.Text as T
 import qualified Graphics.UI.Gtk as G
 import Control.Monad.Trans (liftIO)
-import System.Taffybar.Compat.GtkLibs
 import System.Exit (ExitCode)
 import System.IO (hPutStr, hClose)
 import System.Process
@@ -27,6 +27,7 @@ import System.Taffybar.Widget.Generic.PollingLabel
 import System.Taffybar.Widget.Util
 import System.Taffybar.Widget.Workspaces
 
+
 transparent = (0.0, 0.0, 0.0, 0.0)
 yellow1 = (0.9453125, 0.63671875, 0.2109375, 1.0)
 yellow2 = (0.9921875, 0.796875, 0.32421875, 1.0)
@@ -44,20 +45,22 @@ myGraphConfig =
 
 netCfg = myGraphConfig
   { graphDataColors = [yellow1, yellow2]
-  , graphLabel = Just "net"
+  , graphLabel = Just $ T.pack "net"
   }
 
 memCfg = myGraphConfig
   { graphDataColors = [taffyBlue]
-  , graphLabel = Just "mem"
+  , graphLabel = Just $ T.pack "mem"
   }
 
 cpuCfg = myGraphConfig
   { graphDataColors = [green1, green2]
-  , graphLabel = Just "cpu"
+  , graphLabel = Just $ T.pack "cpu"
   }
 
-wcfg = (defaultWeatherConfig "KTVC") { weatherTemplate = "$tempF$ F / $tempC$ C - $skyCondition$" }
+-- TC: KTVC
+-- Dowagiac: KBEH
+wcfg = (defaultWeatherConfig "KTVC") { weatherTemplate = "$stationPlace$ : $tempF$ F / $tempC$ C - $skyCondition$" }
 
 memCallback :: IO [Double]
 memCallback = do
@@ -68,20 +71,12 @@ cpuCallback = do
   (_, systemLoad, totalLoad) <- cpuLoad
   return [totalLoad, systemLoad]
 
-{-shellWidgetTooltpNew :: String -> String -> String -> Double -> TaffyIO G.Widget-}
-{-shellWidgetTooltipNew defaultStr cmd tooltipCmd interval = do-}
-  {-mString <- readCreateProcess (shell cmd) ""-}
-  {-tString <- readCreateProcess (shell tooltipCmd) ""-}
-  {-{-liftIO $ mString-}-}
-  {-{-liftIO $ tString-}-}
-  {-label <- pollingLabelNewWithTooltip defaultStr interval $ [mString, tString]-}
+
+{-shellWidgetNew defaultStr cmd interval = do-}
+  {-{-label <- pollingLabelNew (T.pack defaultStr) interval $ return T.pack `ap` ( stripStr $ readCreateProcess (shell cmd) "")-}-}
+  {-label <- pollingLabelNew defaultStr interval $ T.pack (liftIO $ stripStr $ readCreateProcess (shell cmd) "")-}
   {-liftIO $ G.widgetShowAll $ label-}
-
-shellWidgetNew defaultStr cmd interval = do
-  label <- pollingLabelNew defaultStr interval $ stripStr $ readCreateProcess (shell cmd) ""
-  liftIO $ G.widgetShowAll $ label
-
-  return label
+  {-return label-}
 
 stripStr :: IO String -> IO String
 stripStr ioString = do
@@ -89,6 +84,7 @@ stripStr ioString = do
   return $ rstrip $ str
 
 rstrip = reverse . dropWhile isSpace . reverse
+
 
 main = do
   let myWorkspacesConfig =
@@ -104,9 +100,9 @@ main = do
       clock = textClockNew Nothing "%a %b %_d %r" 1
       layout = layoutNew defaultLayoutConfig
       windows = windowsNew defaultWindowsConfig
-      updates = shellWidgetNew "..." "echo -e \"Updates: $(eix -u# | wc -l)\"" 5
-      kernel = shellWidgetNew "..." "echo -e \"Cur: $(uname -r)\"" 86400 
-      newKernel = shellWidgetNew "..." "echo -e \"New: $(newkern)\"" 1800
+      {-updates = shellWidgetNew "..." "echo -e \"Updates: $(eix -u# | wc -l)\"" 5-}
+      {-kernel = shellWidgetNew "..." "echo -e \"Cur: $(uname -r)\"" 86400 -}
+      {-newKernel = shellWidgetNew "..." "echo -e \"New: $(newkern)\"" 1800-}
       weather = liftIO $ weatherNew wcfg 10
           -- See https://github.com/taffybar/gtk-sni-tray#statusnotifierwatcher
           -- for a better way to set up the sni tray
@@ -124,9 +120,9 @@ main = do
           , mem
           , net
           , mpris2New
-          , updates
-          , kernel
-          , newKernel
+	  {-, updates-}
+          {-, kernel-}
+          {-, newKernel-}
           , weather
           ]
         , barPosition = Top

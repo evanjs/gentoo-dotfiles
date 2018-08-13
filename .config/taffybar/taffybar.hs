@@ -1,16 +1,15 @@
 -- -*- mode:haskell -*-
-module Main where
-{-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE OverloadedStrings #-}
+module Main where
+import Control.Monad
 import Control.Monad.IO.Class
 import qualified Data.ByteString.Lazy as L
-import qualified Data.Text as T
 import qualified Data.ByteString.Lazy.Char8 as Char8
 import Data.Char (isSpace)
+import qualified Data.Text as T
 import qualified Graphics.UI.Gtk as G
-import Control.Monad.Trans (liftIO, lift)
-import Network.Curl.Download
-{-import System.Taffybar.Compat.GtkLibs-}
+import Control.Monad.Trans (liftIO)
+import System.Taffybar.Compat.GtkLibs
 import System.Exit (ExitCode)
 import System.IO (hPutStr, hClose)
 import System.Process
@@ -28,6 +27,7 @@ import System.Taffybar.Widget.Generic.PollingGraph
 import System.Taffybar.Widget.Generic.PollingLabel
 import System.Taffybar.Widget.Util
 import System.Taffybar.Widget.Workspaces
+
 
 transparent = (0.0, 0.0, 0.0, 0.0)
 yellow1 = (0.9453125, 0.63671875, 0.2109375, 1.0)
@@ -59,7 +59,9 @@ cpuCfg = myGraphConfig
   , graphLabel = Just $ T.pack "cpu"
   }
 
-wcfg = (defaultWeatherConfig "KTVC") { weatherTemplate = "$tempF$ F / $tempC$ C - $skyCondition$" }
+-- TC: KTVC
+-- Dowagiac: KBEH
+wcfg = (defaultWeatherConfig "KTVC") { weatherTemplate = "$stationPlace$ : $tempF$ F / $tempC$ C - $skyCondition$" }
 
 memCallback :: IO [Double]
 memCallback = do
@@ -78,6 +80,7 @@ cpuCallback = do
   {-{-liftIO $ tString-}-}
   {-label <- pollingLabelNewWithTooltip defaultStr interval $ return (mString, Just tString)-}
   {-liftIO $ G.widgetShowAll $ label-}
+  {-return label-}
 
 {-shellWidgetNew defaultStr cmd interval = do-}
   {-label <- pollingLabelNew defaultStr interval $ T.unpack (T.pack( readCreateProcess (shell cmd) "" ))-}
@@ -110,6 +113,7 @@ stripStr ioString = do
   return $ rstrip $ str
 
 rstrip = reverse . dropWhile isSpace . reverse
+
 
 main = do
   let myWorkspacesConfig =

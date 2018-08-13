@@ -2,16 +2,23 @@
 import locale
 import sys
 import logging
+import os
 
 from coinbase.wallet.client import Client
+from dotenv import load_dotenv
+load_dotenv()
+
+from pathlib import Path
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 locale.setlocale(locale.LC_MONETARY, 'en_US.utf8')
 
 fh = logging.FileHandler("/var/log/polybar/coinbase.log")
 fh.setLevel(logging.DEBUG)
 
-api_key = "***REMOVED***"
-api_secret = "***REMOVED***"
+api_key = os.getenv('API_KEY')
+api_secret = os.getenv('API_SECRET')
 #api_version = "2017-12-14"
 
 try:

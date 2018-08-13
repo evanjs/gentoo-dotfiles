@@ -4,11 +4,13 @@ module Main where
 {-# LANGUAGE OverloadedStrings #-}
 import Control.Monad.IO.Class
 import qualified Data.ByteString.Lazy as L
+import qualified Data.Text as T
 import qualified Data.ByteString.Lazy.Char8 as Char8
 import Data.Char (isSpace)
 import qualified Graphics.UI.Gtk as G
-import Control.Monad.Trans (liftIO)
-import System.Taffybar.Compat.GtkLibs
+import Control.Monad.Trans (liftIO, lift)
+import Network.Curl.Download
+{-import System.Taffybar.Compat.GtkLibs-}
 import System.Exit (ExitCode)
 import System.IO (hPutStr, hClose)
 import System.Process
@@ -44,17 +46,17 @@ myGraphConfig =
 
 netCfg = myGraphConfig
   { graphDataColors = [yellow1, yellow2]
-  , graphLabel = Just "net"
+  , graphLabel = Just $ T.pack "net"
   }
 
 memCfg = myGraphConfig
   { graphDataColors = [taffyBlue]
-  , graphLabel = Just "mem"
+  , graphLabel = Just $ T.pack "mem"
   }
 
 cpuCfg = myGraphConfig
   { graphDataColors = [green1, green2]
-  , graphLabel = Just "cpu"
+  , graphLabel = Just $ T.pack "cpu"
   }
 
 wcfg = (defaultWeatherConfig "KTVC") { weatherTemplate = "$tempF$ F / $tempC$ C - $skyCondition$" }
@@ -68,20 +70,39 @@ cpuCallback = do
   (_, systemLoad, totalLoad) <- cpuLoad
   return [totalLoad, systemLoad]
 
-{-shellWidgetTooltpNew :: String -> String -> String -> Double -> TaffyIO G.Widget-}
+{-shellWidgetTooltipNew :: String -> String -> String -> Double -> C.TaffyIO G.Widget-}
 {-shellWidgetTooltipNew defaultStr cmd tooltipCmd interval = do-}
   {-mString <- readCreateProcess (shell cmd) ""-}
   {-tString <- readCreateProcess (shell tooltipCmd) ""-}
   {-{-liftIO $ mString-}-}
   {-{-liftIO $ tString-}-}
-  {-label <- pollingLabelNewWithTooltip defaultStr interval $ [mString, tString]-}
+  {-label <- pollingLabelNewWithTooltip defaultStr interval $ return (mString, Just tString)-}
   {-liftIO $ G.widgetShowAll $ label-}
 
-shellWidgetNew defaultStr cmd interval = do
-  label <- pollingLabelNew defaultStr interval $ stripStr $ readCreateProcess (shell cmd) ""
-  liftIO $ G.widgetShowAll $ label
+{-shellWidgetNew defaultStr cmd interval = do-}
+  {-label <- pollingLabelNew defaultStr interval $ T.unpack (T.pack( readCreateProcess (shell cmd) "" ))-}
+  {-liftIO $ G.widgetShowAll $ label-}
 
-  return label
+  {-return label-}
+
+{-cmdThing :: T.Text -> T.Text-}
+{-cmdThing :: String -> String-}
+{-cmdThing :: String -> String-}
+{-cmdThing cmd = do-}
+    {-liftIO $ stripStr $ readCreateProcess (shell cmd) ""-}
+    
+
+{-download url = do-}
+   {-doc <- openURI url-}
+   {-Just doc-}
+
+{-shellWidgetNewTooltip :: String -> String -> Double -> C.TaffyIO G.Widget-}
+{-shellWidgetNewTooltip title cmd interval = do-}
+  {-theTip <- stripStr $ readCreateProcess (shell cmd) ""-}
+  {-label <- pollingLabelNewWithTooltip title interval $ return (title, Just theTip)-}
+  {-liftIO $ G.widgetShowAll $ label-}
+
+  {-return label-}
 
 stripStr :: IO String -> IO String
 stripStr ioString = do
@@ -104,10 +125,18 @@ main = do
       clock = textClockNew Nothing "%a %b %_d %r" 1
       layout = layoutNew defaultLayoutConfig
       windows = windowsNew defaultWindowsConfig
-      updates = shellWidgetNew "..." "echo -e \"Updates: $(eix -u# | wc -l)\"" 5
-      kernel = shellWidgetNew "..." "echo -e \"Cur: $(uname -r)\"" 86400 
-      newKernel = shellWidgetNew "..." "echo -e \"New: $(newkern)\"" 1800
-      weather = liftIO $ weatherNew wcfg 10
+      {-texxxt =  liftIO $ cmdThing "eix -u# wc -l"-}
+      {-updates = commandRunnerNew 10 "echo" ["-e", "Updates:", texxxt] (T.pack "Failed to fetch updates")-}
+      {-updates = commandRunnerNew 10 "echo" ["-e", "Updates: $(eix -u# | wc -l)"] (T.pack "Failed to fetch updates")-}
+      updates = commandRunnerNew 10 "ecount" [] (T.pack "can't query updates")
+      {-wttr = commandRunnerNew 10 "curl" ["http://wttr.in"] (T.pack "no wttr")-}
+      {-updates = shellWidgetNew (T.pack "...") "echo -e \"Updates: $(eix -u# | wc -l)\"" 5-}
+      {-kernel = shellWidgetNew (T.pack "...") "echo -e \"Cur: $(uname -r)\"" 86400 -}
+      newKernel = commandRunnerNew 1800 "newkern" [] (T.pack "?.?.?")
+      {-wttr = shellWidgetNewTooltip "..." "curl wttr.in" 20-}
+      {-wttr = return shellWidgetTooltipNew "..." "echo ..." "curl wttr.in" 20-}
+      {-wttr = pollingLabelNewWithTooltip " ... " 10 $ return ("...", Just ( liftIO $ openURI "wttr.in"))-}
+      weather = liftIO $ weatherNew wcfg 30
           -- See https://github.com/taffybar/gtk-sni-tray#statusnotifierwatcher
           -- for a better way to set up the sni tray
       tray = sniTrayThatStartsWatcherEvenThoughThisIsABadWayToDoIt
@@ -123,10 +152,11 @@ main = do
           , cpu
           , mem
           , net
-          , mpris2New
+          {-, mpris2New-}
           , updates
-          , kernel
-          , newKernel
+          {-, wttr-}
+          {-, kernel-}
+	  , newKernel
           , weather
           ]
         , barPosition = Top

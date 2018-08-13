@@ -1,9 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/python3.6
 import locale
 import sys
+import logging
+
 from coinbase.wallet.client import Client
 
 locale.setlocale(locale.LC_MONETARY, 'en_US.utf8')
+
+fh = logging.FileHandler("/var/log/polybar/coinbase.log")
+fh.setLevel(logging.DEBUG)
 
 api_key = "***REMOVED***"
 api_secret = "***REMOVED***"
@@ -40,4 +45,9 @@ ftotalbal = locale.currency(float(totalbal), grouping=True)
 
 
 if "USD" in str(bal):
-    print(f' {cfbal} ||  {fbtctousd} ||| BCH {cfbchbal} |||| TOTAL: {ftotalbal} ')
+    logging.debug("Check passed")
+    print(f' {fbtctousd} ||  {cfbal} ||| BCH {cfbchbal} |||| TOTAL: {ftotalbal} ')
+else:
+    print ("Error")
+    logging.debug("Check failed")
+    logging.debug(f"fbtctoused: {fbtctousd}\ncfbal: {cfbal}\ncfbchbal: {cfbchbal}\ntotal: {ftotalbal}\n")

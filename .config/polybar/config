@@ -26,6 +26,51 @@ yellow = #F0C674
 green = #B3BB67
 blue = #7FA0BC
 
+[bar/vnc]
+monitor = ${env:MONITOR:VNC-0}
+width = 100%
+height = 30
+fixed-center = true
+bottom = false
+background = #2B303B
+foreground = ${colors.foreground}
+line-size = 0
+border-bottom-size = 2
+border-bottom-color = #81A2Be
+border-top-size = 0
+border-top-color = #81A2BE
+padding-left = 1
+padding-right = 1
+module-margin-left = 1
+module-margin-right = 1
+font-0 = Roboto Condensed:size=10;1
+font-1 = unifont:fontformat=truetype
+font-2 = FontAwesome:size=15;1
+tray-padding = 2
+tray-maxsize = 24
+tray-position = left
+
+[bar/vnc-bottom]
+monitor = ${env:MONITOR:VNC-0}
+width = 100%
+height = 30
+fixed-center = true
+bottom = true
+background = #2B303B
+foreground = ${colors.foreground}
+line-size = 0
+border-bottom-size = 0
+border-bottom-color = #81A2BE
+border-top-size = 2
+padding-left = 1
+padding-right = 1
+module-margin-left = 1
+module-margin-right = 1
+font-0 = Roboto Condensed:size=10;1
+font-1 = unifont:fontformat=truetype
+font-2 = FontAwesome:size=15;1
+modules-center = wtime
+
 [bar/barr]
 monitor = ${env:MONITOR:HDMI-A-0}
 width = 100%
@@ -67,6 +112,11 @@ tray-padding = 2
 ;tray-offset-x = 
 ;tray-detached = false
 tray-maxsize = 24
+
+[module/compiling]
+type = custom/script
+exec = qlop -c | head -n1
+interval = 15
 
 [module/browser]
 type = custom/text
@@ -891,6 +941,7 @@ padding-left = 1
 padding-right = 1
 module-margin-left = 1
 module-margin-right = 1
+separator = "|"
 ;locale = fr_FR.UTF-8
 font-0 = Roboto Condensed:size=10;1
 font-1 = unifont:fontformat=truetype:size=12:antialias=false;0
@@ -898,7 +949,7 @@ font-2 = FontAwesome:size=15;1
 modules-left = i3
 ;modules-left = i3
 modules-center = xtitle
-modules-right = wlan filesystem battery coinbase
+modules-right = compiling filesystem battery coinbase
 ;modules-left = menu i3 clock pavolume network xkeyboard rofi eth memory cpu temp
 ;tray-position =
 ;tray-padding = 2

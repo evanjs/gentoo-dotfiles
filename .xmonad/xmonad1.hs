@@ -39,21 +39,22 @@ import System.Taffybar.Support.PagerHints (pagerHints)
 myTerminal = "kitty"
 
 -- The command to lock the screen or show the screensaver.
-myLock = "~/.config/i3/i3lock-fancy.sh"
+myLock = "~/.config/i3/i3lock-fancy-temp.sh"
 myHalfLock = "xtrlock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "maim -s ~/shots/$(date +%Y-%m-%d_%T).png"
+mySelectScreenshot = "maim -s ~/Pictures/screenshots/$(date +%FT%H-%M-%S%z).png"
 
 -- The command to take a fullscreen screenshot.
-myScreenshot = "maim > ~/shots/$(date +%Y-%m-%d_%T).png"
+myScreenshot = "maim > ~/Pictures/screenshots/$(date +%FT%H-%M-%S%z).png"
 
-myDelayedScreenshot = "maim -d3 ~/shots/$(date +%Y-%m-%d_%T).png"
+myDelayedScreenshot = "maim -d3 ~/Pictures/screenshots/$(date +%FT%H-%M-%S%z).png"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-myLauncher = "rofi -modi -lines 7 -show run -columns 2"
+{-myLauncher = "rofi -modi -lines 7 -show run -columns 2"-}
+myLauncher = "rofi -show run -lines 7"
 -- Location of your xmobar.hs / xmobarrc
 -- myXmobarrc = "~/.xmonad/xmobar-single.hs"
 myBarCfg = "~/.config/taffybar/taffybar.hs"
@@ -65,8 +66,8 @@ myBar = "xmobar"
 -- The default number of workspaces (virtual screens) and their names.
 --
 --myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
-myWorkspaces = ["1:web","2","3","4","5:debug","6","7","8:build","9:dashboard","10:slack"] ++ map show [11..999]
-
+--myWorkspaces = ["1:web","2","3","4","5:debug","6","7","8:build","9:dashboard","10:slack"] ++ map show [11..999]
+myWorkspaces = map show [1..999]
 
 kill8 ss | Just w <- W.peek ss = (W.insertUp w) $ W.delete w ss
          | otherwise = ss
@@ -123,7 +124,7 @@ myNormalBorderColor  = "#7c7c7c"
 myFocusedBorderColor = "#ffb6b0"
 
 -- Colors for text and backgrounds of each tab when in "Tabbed" layout.
-tabConfig = defaultTheme {
+tabConfig = def {
     activeBorderColor = "#7C7C7C",
     activeTextColor = "#CEFFAC",
     activeColor = "#000000",
@@ -387,12 +388,12 @@ main = do
   {-xmproc <- spawnPipe ("xmobar")-}
   {-xmproc <- spawnPipe ("/home/evanjs/.local/bin/my-taffybar")-}
   xmproc <- spawnPipe ("/home/evanjs/.xmonad/restart-taffybar")
-  xmonad $ docks $ ewmh $ pagerHints defaults {
+  xmonad $ docks  $ ewmh $ pagerHints defaults {
       logHook = dynamicLogWithPP $ def
       , manageHook = manageDocks <+> myManageHook
---      , startupHook = docksStartupHook <+> setWMName "LG3D"
-      {-, handleEventHook = docksEventHook-}
-  }
+      , startupHook = docksStartupHook <+> setWMName "LG3D"
+      , handleEventHook = docksEventHook
+ }
 
 
 ------------------------------------------------------------------------
@@ -403,7 +404,7 @@ main = do
 --
 -- No need to modify this.
 --
-defaults = defaultConfig {
+defaults = def {
     -- simple stuff
     terminal           = myTerminal,
     focusFollowsMouse  = myFocusFollowsMouse,

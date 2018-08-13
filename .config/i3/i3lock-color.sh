@@ -28,7 +28,7 @@ i3lock              \
 --keyhlcolor=$W       \
 --bshlcolor=$W        \
 \
---screen 0            \
+--screen 2            \
 --clock               \
 --blur 5              \
 --indicator           \

@@ -9,7 +9,7 @@ import Data.Char (isSpace)
 import qualified Data.Text as T
 import qualified Graphics.UI.Gtk as G
 import Control.Monad.Trans (liftIO)
-{-import System.Taffybar.Compat.GtkLibs-}
+import System.Taffybar.Compat.GtkLibs
 import System.Exit (ExitCode)
 import System.IO (hPutStr, hClose)
 import System.Process
@@ -107,6 +107,43 @@ cpuCallback = do
 
   {-return label-}
 
+{-getDoc :: Maybe String -> String -> IO (Either String)-}
+{-getDoc url = do-}
+  {-dat <- downloadURL url-}
+  {-case dat of-}
+    {-Right dat' -> case parse parseData url dat' of-}
+      {-Right d -> return (Right d)-}
+      {-Left err -> return (Left (show err))-}
+    {-Left err -> return (Left (show err))-}
+
+
+{-getCurrentWttr :: IO (Either String)-}
+    {--> StringTemplate String-}
+    {--> StringTemplate String-}
+    {--> IO (T.Text, Maybe T.Text)-}
+{-getCurrentWttr labelTpl tooltipTpl = do-}
+  {-dat <- getDoc "wttr.in"-}
+    {-case dat of-}
+      {-Right wi ->-}
+        {-case formatter of-}
+          {-String f -> do-}
+            {-let rawLabel <- T.pack $ f wi-}
+            {-lbl <- markupEscapeText rawLabel (fromIntegral $ T.length rawLabel)-}
+            {-return (lbl, Just lbl)-}
+      {-Left err -> do-}
+        {-putStrLn err-}
+        {-return ("N/A", Nothing)-}
+
+{-weatherTooltipNew' labelTpl tooltipTpl = liftIO $ do-}
+  {-let labelTpl' = newSTMP "aaa"-}
+      {-tooltipTpl' = newSTMP "bbb"-}
+
+  {-l <- pollingLabelNewWithTooltip "Can't retrieve tooltip"-}
+  {-(getCurrentWttr labelTpl' tooltipTpl')-}
+
+  {-GI.Gtk.WidgetShowAll l-}
+  {-return l-}
+
 stripStr :: IO String -> IO String
 stripStr ioString = do
   str <- ioString
@@ -137,9 +174,12 @@ main = do
       {-updates = shellWidgetNew (T.pack "...") "echo -e \"Updates: $(eix -u# | wc -l)\"" 5-}
       {-kernel = shellWidgetNew (T.pack "...") "echo -e \"Cur: $(uname -r)\"" 86400 -}
       newKernel = commandRunnerNew 1800 "newkern" [] (T.pack "?.?.?")
+      {-wttr = pollingLabelNewWithTooltip "..." "echo ..." "wttrt" 20-}
+      {-wttr = pollingLabelNewWithTooltip (T.pack "nothing") 10 $ (, Nothing) <$> "wttrt"-}
       {-wttr = shellWidgetNewTooltip "..." "curl wttr.in" 20-}
       {-wttr = return shellWidgetTooltipNew "..." "echo ..." "curl wttr.in" 20-}
       {-wttr = pollingLabelNewWithTooltip " ... " 10 $ return ("...", Just ( liftIO $ openURI "wttr.in"))-}
+      {-wttr = weatherTooltipNew'-}
       weather = liftIO $ weatherNew wcfg 30
           -- See https://github.com/taffybar/gtk-sni-tray#statusnotifierwatcher
           -- for a better way to set up the sni tray
@@ -151,8 +191,8 @@ main = do
             workspaces : map (>>= buildContentsBox) [ layout, windows ]
         , endWidgets = map (>>= buildContentsBox)
           [ 
-            {-batteryIconNew-}
-          , clock
+            {-batteryIconNew ,-}
+	    clock
           , tray
           , cpu
           , mem
@@ -161,13 +201,14 @@ main = do
           , updates
           {-, wttr-}
           {-, kernel-}
-	  , newKernel
+          , newKernel
           , weather
           ]
-        , barPosition = Top
+        , barPosition = Bottom
         , barPadding = 10
         , barHeight = 50
         , widgetSpacing = 8
         }
-  startTaffybar $ withBatteryRefresh $ withLogServer $ withToggleServer $
+  {-startTaffybar $ withBatteryRefresh $ withLogServer $ withToggleServer $-}
+  startTaffybar $ withLogServer $ withToggleServer $
                toTaffyConfig myConfig

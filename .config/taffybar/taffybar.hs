@@ -9,7 +9,7 @@ import Data.Char (isSpace)
 import qualified Data.Text as T
 import qualified Graphics.UI.Gtk as G
 import Control.Monad.Trans (liftIO)
-import System.Taffybar.Compat.GtkLibs
+{-import System.Taffybar.Compat.GtkLibs-}
 import System.Exit (ExitCode)
 import System.IO (hPutStr, hClose)
 import System.Process
@@ -150,7 +150,8 @@ main = do
         { startWidgets =
             workspaces : map (>>= buildContentsBox) [ layout, windows ]
         , endWidgets = map (>>= buildContentsBox)
-          [ batteryIconNew
+          [ 
+            {-batteryIconNew-}
           , clock
           , tray
           , cpu

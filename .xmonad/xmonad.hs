@@ -24,9 +24,14 @@ import XMonad.Layout.ToggleLayouts
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.NoBorders
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.Script
 import XMonad.Actions.WorkspaceNames
 import XMonad.Actions.DynamicWorkspaces
+import XMonad.Layout.IndependentScreens
+import XMonad.Hooks.DynamicBars as Bars
 
+
+import System.IO
 import System.Exit
 
 import qualified XMonad.StackSet  as W
@@ -256,61 +261,38 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
       , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
   ++
 
-  -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
-  -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
-  {-[((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))-}
-      {-| (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]-}
-      {-, (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]-}
-
   [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
       | (key, sc) <- zip [xK_w, xK_e, xK_r] [1,2,0]
       , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
-
-
---------------------------------------------
--- status bar and logging
-
-myPP statusPipe = xmobarPP 
-  { ppOutput  = hPutStrLn statusPipe
-  , ppTitle   = xmobarColor "green" "" . shorten 50
-  , ppUrgent  = xmobarColor "red"   "" . wrap "!" "!"
-  , ppCurrent = xmobarColor "red" "#efebe7"
-  , ppVisible = wrap "[" "]"
-  , ppSort    = getSortByXineramaRule
-  }
-
-myLogHook = dynamicLogWithPP . myPP
-{-myLogHook = workspaceNamesPP . . dynamicLogW -}
-{-myLogHook = dynamicLogWithPP . myPP-}
-{-myLogHook = workspaceNamesPP $ dynamicLogWithPP . myPP-}
-{-myLogHook =-}
-  {-workspaceNamesPP xmobarPP >>= dynamicLogString >>= xmonadPropLog-}
---UmyLogHook = workspaceNamesPP >>= 
-
 --------------------------------------------
 -- Startup hook
 
-myStartupHook = return ()
+myStartupHook :: X ()
+myStartupHook = do
+  Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
+
+
+xmobarCreator :: Bars.DynamicStatusBar
+xmobarCreator (S sid) = spawnPipe $ "xmobar -x " ++ show sid
+
+xmobarDestroyer :: Bars.DynamicStatusBarCleanup
+xmobarDestroyer = return ()
+
 --------------------------------------------
 -- config
+--
 
-evanjsConfig statusPipe = def
+evanjsConfig = def
   { terminal    = "kitty"
   , manageHook  = myManageHook <+> manageDocks
   , modMask     = myModMask
-  , logHook     = myLogHook statusPipe
+  , logHook     = Bars.multiPP (xmobarPP) (xmobarPP)
   , layoutHook  = myLayouts
   , workspaces  = myWorkspaces
   , startupHook = myStartupHook
   , keys        = myKeys
   }
 
-main = do
-  {-statusPipe <- spawnPipe ("pkill trayer; sleep 1; /usr/local/bin/trayerc")-}
-  statusPipe <- spawnPipe ("pkill xmobar; sleep 1; /usr/bin/xmobar")
-  xmonad $
-    docks $
-      withUrgencyHook NoUrgencyHook $
-        evanjsConfig statusPipe
 
+main = xmonad . docks $ evanjsConfig

@@ -60,21 +60,10 @@ myDelayedScreenshot = "maim -d3 ~/shots/$(date +%Y-%m-%d_%T).png"
 myLauncher = "rofi -lines 7 -columns 2 -modi run -show"
 mySshLauncher = "rofi -lines 7 -columns 2 -modi ssh -show"
 
-{-xmobarEscape = concatMap doubleLts-}
-  {-where doubleLts '<' = "<<"-}
-        {-doubleLts x   = [x]-}
-
 ------------------------------------------------------------------------
 -- workspaces
 
-myWorkspaces = ["web", "2", "3", "4", "5", "6", "7", "8", "9"]
-{-myWorkspaces :: [String]-}
-{-myWorkspaces = clickable . (map xmobarEscape) $ ["web", "2", "3", "4", "5", "6", "7", "8", "9", "social"] ++ map show [11..999]-}
-
- {-where-}
-        {-clickable l = [ "<action=xdotool key alt+" ++ show (n) ++ ">" ++ ws ++ "</action>" |-}
-                            {-(i,ws) <- zip [1..5] l,                                        -}
-                            {-let n = i ]-}
+myWorkspaces = ["web", "2", "3", "4", "5", "6", "7", "8", "9"] ++ map show [11.999]
 
 kill8 ss | Just w <- W.peek ss = (W.insertUp w) $ W.delete w ss
          | otherwise = ss
@@ -88,10 +77,6 @@ tabbedConf = def
   { fontName = "xft:fira-code"
   }
 
-{-genericLayouts = avoidStruts $-}
-                 {-smartBorders $-}
-                 {-toggleLayouts (noBorders Full) $-}
-                 {-tiled ||| tabbedLayout ||| Mirror tiled ||| (noBorders Full)-}
 genericLayouts  = avoidStruts $
                   smartBorders $
                  (tall ||| Mirror tall ||| tabbedLayout)
@@ -271,6 +256,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 myStartupHook :: X ()
 myStartupHook = do
   Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
+  spawn("~/.screenlayout/default.sh && sleep 1 && trbg")
 
 
 xmobarCreator :: Bars.DynamicStatusBar
@@ -285,7 +271,7 @@ xmobarDestroyer = return ()
 
 evanjsConfig = def
   { terminal    = "kitty"
-  , manageHook  = myManageHook <+> manageDocks
+  , manageHook  = manageDocks <+> myManageHook
   , modMask     = myModMask
   , logHook     = Bars.multiPP (xmobarPP) (xmobarPP)
   , layoutHook  = myLayouts

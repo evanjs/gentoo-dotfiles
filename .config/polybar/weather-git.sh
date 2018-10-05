@@ -7,7 +7,7 @@
 # Account overview: https://darksky.net/dev/account
 
 # Define your location. api.darksky.net/forecast/api_key/latitude,longitude?... If you want Fahrenheit, use units=us
-address="***REMOVED***"
+address="https://api.darksky.net/forecast/6b2600c5373750d945e0dc10c657acaf/59.433335,24.750486?units=si&exclude=minutely,hourly,daily,alerts,flags"
 weather="$(wget -q -O- $address)"
 
 # Look for the current weather conditions

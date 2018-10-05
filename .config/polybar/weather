@@ -4,7 +4,7 @@ import urllib.request, json
 
 city = "Traverse City"
 #city = "Chicago"
-api_key = "***REMOVED***"
+api_key = "60309dc74f095fe90e1f113b726f1ca7"
 
 units_metric = "Metric"
 units_us = "Imperial"

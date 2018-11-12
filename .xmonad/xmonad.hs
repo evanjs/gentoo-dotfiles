@@ -8,41 +8,42 @@
 
 
 
+import Graphics.X11.ExtraTypes.XF86
+import System.Exit
+import System.IO
+
 import XMonad
+import XMonad.Actions.DynamicWorkspaces
+import XMonad.Actions.NoBorders
+import XMonad.Actions.PhysicalScreens
+import XMonad.Actions.WorkspaceNames
 import XMonad.Config.Desktop
+import XMonad.Hooks.DynamicBars as Bars
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.Script
+import XMonad.Hooks.SetWMName
 import XMonad.Hooks.UrgencyHook
+import XMonad.Layout.Fullscreen
+import XMonad.Layout.IndependentScreens
+import XMonad.Layout.NoBorders
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Tabbed
+import XMonad.Layout.ToggleLayouts
 import XMonad.Util.EZConfig(additionalKeys)
-import Graphics.X11.ExtraTypes.XF86
 import XMonad.Util.Run
 import XMonad.Util.Scratchpad
 import XMonad.Util.WorkspaceCompare
-import XMonad.Actions.NoBorders
-import XMonad.Layout.Tabbed
-import XMonad.Layout.ToggleLayouts
-import XMonad.Layout.PerWorkspace
-import XMonad.Layout.NoBorders
-import XMonad.Hooks.SetWMName
-import XMonad.Hooks.Script
-import XMonad.Actions.WorkspaceNames
-import XMonad.Actions.DynamicWorkspaces
-import XMonad.Layout.IndependentScreens
-import XMonad.Hooks.DynamicBars as Bars
 
-
-import System.IO
-import System.Exit
-
-import qualified XMonad.StackSet  as W
 import qualified Data.Map         as M
+import qualified XMonad.StackSet  as W
 
 ------------------------------------------------------------------------
 
 myTerminal = "kitty"
 
 -- The command to lock the screen or show the screensaver.
---myLock = "~/.config/i3/i3lock-fancy.sh"
 myLock = "slimlock"
 myHalfLock = "xtrlock"
 
@@ -65,7 +66,7 @@ mySshLauncher = "rofi -lines 7 -columns 2 -modi ssh -show"
 
 myWorkspaces = ["web", "2", "3", "4", "5", "6", "7", "8", "9"] ++ map show [11.999]
 
-kill8 ss | Just w <- W.peek ss = (W.insertUp w) $ W.delete w ss
+kill8 ss | Just w <- W.peek ss = W.insertUp w $ W.delete w ss
          | otherwise = ss
 
 ------------------------------------------------------------------------
@@ -74,13 +75,14 @@ kill8 ss | Just w <- W.peek ss = (W.insertUp w) $ W.delete w ss
 tabbedLayout = tabbed shrinkText tabbedConf
 
 tabbedConf = def
-  { fontName = "xft:fira-code"
+  {
+    fontName = "xft:fira-code"
   }
 
-genericLayouts  = avoidStruts $
-                  smartBorders $
-                 (tall ||| Mirror tall ||| tabbedLayout)
-                 where tall = Tall 1 (3/100) (1/2)
+genericLayouts =
+    avoidStruts $
+    smartBorders (tall ||| Mirror tall ||| tabbedLayout ||| noBorders (fullscreenFull Full))
+        where tall = Tall 1 (3/100) (1/2)
 
 myLayouts = genericLayouts
 
@@ -88,21 +90,32 @@ myLayouts = genericLayouts
 ------------------------------------------------------------------------
 -- window rules
 
-myManageHook = scratchpadManageHookDefault <+>
-               (composeAll . concat $
-    [ [ className =? c --> doFloat | c <- floats] ,
-      [ className =? w --> moveTo "web" | w <- webs] ,
-      [ className =? "slack"         --> moveTo "im"
-        ] ])
-      where floats = ["MPlayer", ".", "feh"]
-            webs   = ["google-chrome-bin", "chromium-browser", "chromium", "chrome"]
-            moveTo = doF . W.shift
+--myManageHook = scratchpadManageHookDefault <+>
+               --(composeAll . concat $
+    --[ [ className =? c --> doFloat | c <- floats] ,
+      --[ className =? w --> moveTo "web" | w <- webs] ,
+      --[ className =? "slack"         --> moveTo "im"
+        --] ])
+      --where floats = ["MPlayer", ".", "feh"]
+            --webs   = ["google-chrome-bin", "chromium-browser", "chromium", "chrome"]
+            --moveTo = doF . W.shift
+
+myManageHook = composeAll
+    [ className =? "Chromium" --> doShift "web"
+    , className =? "Firefox"  --> doShift "web"
+    , resource  =? "desktop_window" --> doIgnore
+    {-, className =? "Steam"          --> doFloat-}
+    , className =? "stalonetray"    --> doIgnore
+    --, className =? "slack"          --> doShift "social"
+    , isFullscreen --> doFullFloat
+    ]
+
 --------------------------------------------
 -- key bindings
 
 myModMask = mod4Mask
 
-myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
+myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 
   -- Start a terminal.  Terminal to start is specified by myTerminal variable.
   [ ((modMask .|. shiftMask, xK_Return),
@@ -228,7 +241,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- Quit xmonad.
   , ((modMask .|. shiftMask, xK_q),
-     io (exitWith ExitSuccess))
+     io exitSuccess)
 
   -- Restart xmonad.
   , ((modMask, xK_q),
@@ -244,19 +257,19 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   [((m .|. modMask, k), windows $ f i)
       | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
       , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+      
   ++
 
-  [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
-      | (key, sc) <- zip [xK_w, xK_e, xK_r] [1,2,0]
-      , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+  [((m.|. modMask, k), f sc)
+      | (k, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+      , (f, m) <- [(viewScreen, 0), (sendToScreen, shiftMask)]]
 
 --------------------------------------------
 -- Startup hook
 
-myStartupHook :: X ()
-myStartupHook = do
-  Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
-  spawn("~/.screenlayout/default.sh && sleep 1 && trbg")
+myStartupHook :: X()
+myStartupHook =
+    spawn "trbg"
 
 
 xmobarCreator :: Bars.DynamicStatusBar
@@ -266,6 +279,11 @@ xmobarDestroyer :: Bars.DynamicStatusBarCleanup
 xmobarDestroyer = return ()
 
 --------------------------------------------
+xmobarPP' = xmobarPP {
+    ppSort = mkWsSort getXineramaPhysicalWsCompare
+}
+    where dropIx wsId = if ':' `elem` wsId then drop 2 wsId else wsId
+--------------------------------------------
 -- config
 --
 
@@ -273,7 +291,7 @@ evanjsConfig = def
   { terminal    = "kitty"
   , manageHook  = manageDocks <+> myManageHook
   , modMask     = myModMask
-  , logHook     = Bars.multiPP (xmobarPP) (xmobarPP)
+  , logHook     = Bars.multiPP xmobarPP' xmobarPP'
   , layoutHook  = myLayouts
   , workspaces  = myWorkspaces
   , startupHook = myStartupHook
@@ -281,4 +299,4 @@ evanjsConfig = def
   }
 
 
-main = xmonad . docks $ evanjsConfig
+main = xmonad . docks =<< xmobar evanjsConfig

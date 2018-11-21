@@ -31,7 +31,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ToggleLayouts
-import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.EZConfig
 import XMonad.Util.Run
 import XMonad.Util.Scratchpad
 import XMonad.Util.WorkspaceCompare
@@ -101,11 +101,12 @@ myLayouts = genericLayouts
             --moveTo = doF . W.shift
 
 myManageHook = composeAll
-    [ className =? "Chromium" --> doShift "web"
-    , className =? "Firefox"  --> doShift "web"
-    , resource  =? "desktop_window" --> doIgnore
+    [ className =? "Chromium"  --> doShift "web"
+    , className =? "Firefox"   --> doShift "web"
+    , className =? "GitKraken" --> doShift "8"
+    --, resource  =? "desktop_window" --> doIgnore
     {-, className =? "Steam"          --> doFloat-}
-    , className =? "stalonetray"    --> doIgnore
+    --, className =? "stalonetray"    --> doIgnore
     --, className =? "slack"          --> doShift "social"
     , isFullscreen --> doFullFloat
     ]
@@ -255,12 +256,18 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
   -- mod-[1..9], Switch to workspace N
   -- mod-shift-[1..9], Move client to workspace N
   [((m .|. modMask, k), windows $ f i)
-      | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-      , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-      
+        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
+      , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+
   ++
 
-  [((m.|. modMask, k), f sc)
+  [((m .|. modMask, k), windows $ onCurrentScreen f i)
+    | (i, k) <- zip (workspaces' conf) [xK_1 .. xK_9]
+    , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+
+  ++
+
+  [((m .|. modMask, k), f sc)
       | (k, sc) <- zip [xK_w, xK_e, xK_r] [0..]
       , (f, m) <- [(viewScreen, 0), (sendToScreen, shiftMask)]]
 
@@ -269,7 +276,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 
 myStartupHook :: X()
 myStartupHook =
-    spawn "trbg"
+    spawn "/home/evanjs/.screenlayout/default.sh && trbg"
 
 
 xmobarCreator :: Bars.DynamicStatusBar
@@ -287,16 +294,17 @@ xmobarPP' = xmobarPP {
 -- config
 --
 
-evanjsConfig = def
-  { terminal    = "kitty"
-  , manageHook  = manageDocks <+> myManageHook
+evanjsConfig = def { 
+    terminal    = "kitty"
+  , manageHook  = myManageHook <+> manageDocks
   , modMask     = myModMask
   , logHook     = Bars.multiPP xmobarPP' xmobarPP'
-  , layoutHook  = myLayouts
+  --, workspaces  = withScreens (countScreens) myWorkspaces
   , workspaces  = myWorkspaces
+  , layoutHook  = myLayouts
   , startupHook = myStartupHook
   , keys        = myKeys
   }
 
-
-main = xmonad . docks =<< xmobar evanjsConfig
+main = do
+  xmonad . docks =<< xmobar evanjsConfig

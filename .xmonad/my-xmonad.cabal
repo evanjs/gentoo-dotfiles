@@ -6,12 +6,18 @@ cabal-version:       >=1.10
 executable my-xmonad
   main-is:             ../xmonad.hs
   -- other-modules lists custom modules in my ~/.xmonad/lib/ directory
-  other-modules:     
+  other-modules:       XMonad.Util.WindowFinder
+                     , XMonad.Util.FileLogger
+                     , XMonad.Layout.FocusWindow
+                     , XMonad.Layout.MiddleColumn
+                     , XMonad.Layout.WindowColumn
+                     , XMonad.Layout.MasterOverlay
   build-depends:       base
                      , xmonad >= 0.13
                      , xmonad-contrib >= 0.13
-                     , taffybar
                      , containers
+                     , mtl
+                     , lens
                      , X11
   hs-source-dirs:      lib
   default-language:    Haskell2010

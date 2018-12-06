@@ -14,14 +14,17 @@
 {-# OPTIONS -Wno-incomplete-patterns #-}
 
 
+
 import Graphics.X11.ExtraTypes.XF86
 import System.Exit
 import System.IO
 
 import XMonad
 import XMonad.Actions.DynamicWorkspaces
+import XMonad.Actions.Navigation2D
 import XMonad.Actions.NoBorders
 import XMonad.Actions.PhysicalScreens
+import XMonad.Actions.SpawnOn
 import XMonad.Actions.WorkspaceNames
 import XMonad.Config.Desktop
 import XMonad.Hooks.DynamicBars as Bars
@@ -31,14 +34,18 @@ import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Script
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.UrgencyHook
+
+import XMonad.Layout.Accordion
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.GridVariants
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerScreen
 import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Roledex
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ToggleLayouts
+
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Run
 import XMonad.Util.Scratchpad
@@ -71,7 +78,7 @@ myTerminal = "kitty"
 
 -- The command to lock the screen or show the screensaver.
 myLock = "slimlock"
-myHalfLock = "/run/current-system/sw/bin/xtrlock-pam"
+myHalfLock = "xtrlock-pam"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
@@ -107,7 +114,7 @@ tabbedConf = def
 
 genericLayouts =
     avoidStruts $ smartBorders $
-        tall ||| Mirror tall||| tabbedLayout ||| noBorders (fullscreenFull Full) ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100))
+        tall ||| Mirror tall||| tabbedLayout ||| noBorders (fullscreenFull Full) ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100)) ||| Accordion ||| Roledex
             where tall = Tall 1 (3/100) (1/2)
 
 chrissoundLayouts = 
@@ -307,7 +314,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 
 myStartupHook :: X()
 myStartupHook =
-    spawnOnce "/home/evanjs/.screenlayout/office-4k.sh && rbg.py"
+    spawnOnce "/home/evanjs/.screenlayout/default.sh && rbg.py && /home/evanjs/.local/bin/my-taffybar"
 
 
 xmobarCreator :: Bars.DynamicStatusBar
@@ -322,11 +329,26 @@ xmobarDestroyer = return ()
 --}
     --where dropIx wsId = if ':' `elem` wsId then drop 2 wsId else wsId
 --------------------------------------------
+
+
+--------------------------------------------
+-- Navigation2D
+--navSetting :: XConfig a -> XConfig a
+navSetting = 
+  navigation2D
+  def
+  (xK_Up, xK_Left, xK_Down, xK_Right)
+  [(myModMask, windowGo),
+   (myModMask .|. shiftMask, windowSwap)]
+  False
+
+--------------------------------------------
     -- config
 --
 
-evanjsConfig = def
-    { terminal    = "kitty"
+evanjsConfig = 
+  navSetting $ def {
+    terminal    = "kitty"
   , manageHook  = manageDocks <+> myManageHook
   , modMask     = myModMask
   , logHook     = Bars.multiPP xmobarPP xmobarPP
@@ -338,4 +360,4 @@ evanjsConfig = def
     }
 
 
-main = xmonad . docks =<< xmobar evanjsConfig
+main = xmonad =<< xmobar evanjsConfig

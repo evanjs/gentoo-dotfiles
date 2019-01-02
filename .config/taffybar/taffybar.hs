@@ -9,7 +9,7 @@ import Data.Char (isSpace)
 import qualified Data.Text as T
 import qualified Graphics.UI.Gtk as G
 import Control.Monad.Trans (liftIO)
-import System.Taffybar.Compat.GtkLibs
+--import System.Taffybar.Compat.GtkLibs
 import System.Exit (ExitCode)
 import System.IO (hPutStr, hClose)
 import System.Process
@@ -204,7 +204,7 @@ main = do
           , newKernel
           , weather
           ]
-        , barPosition = Bottom
+        , barPosition = Top
         , barPadding = 10
         , barHeight = 50
         , widgetSpacing = 8

@@ -40,15 +40,15 @@ packages:
 # (e.g., acme-missiles-0.3)
 # extra-deps: []
 extra-deps: [
+    containers-0.5.11.0,
     dbus-1.0.1,
     dbus-hslogger-0.1.0.1,
     rate-limit-1.4.0,
+    spool-0.1,
     status-notifier-item-0.2.2.1,
     time-units-1.0.0,
-    xml-helpers-1.0.0,
-    spool-0.1,
-    containers-0.5.11.0,
     X11-1.8,
+    xml-helpers-1.0.0,
     xmobar-0.28.1,
   ]
 

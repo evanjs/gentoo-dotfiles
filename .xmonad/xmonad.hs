@@ -13,20 +13,22 @@
 {-# LANGUAGE LambdaCase #-}
 {-# OPTIONS -Wno-incomplete-patterns #-}
 
-
+import Control.Monad ((>=>), join, liftM, when)
 
 import Graphics.X11.ExtraTypes.XF86
 import System.Exit
 import System.IO
 
 import XMonad
-import XMonad.Actions.DynamicWorkspaces
+import XMonad.Actions.DynamicWorkspaces as DynaW
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.NoBorders
 import XMonad.Actions.PhysicalScreens
 import XMonad.Actions.SpawnOn
-import XMonad.Actions.WorkspaceNames
+import XMonad.Actions.WorkspaceNames as WSN
+
 import XMonad.Config.Desktop
+
 import XMonad.Hooks.DynamicBars as Bars
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -42,6 +44,7 @@ import XMonad.Layout.IndependentScreens
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerScreen
 import XMonad.Layout.PerWorkspace
+import XMonad.Layout.ResizableTile
 import XMonad.Layout.Roledex
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ToggleLayouts
@@ -55,6 +58,7 @@ import XMonad.Util.WorkspaceCompare
 import qualified Data.Map                   as M
 import qualified XMonad.Hooks.EwmhDesktops  as H
 import qualified XMonad.StackSet            as W
+import qualified XMonad                     as X
 
 import XMonad.Layout.MiddleColumn
 import XMonad.Layout.WindowColumn
@@ -66,13 +70,13 @@ import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Spacing
-------------------------------------------------------------------------
--- helper functions
-
+----------------------
+-- helper functions --
+----------------------
 defaultThreeColumn :: (Float, Float, Float)
 defaultThreeColumn = (0.15, 0.65, 0.2)
 
-------------------------------------------------------------------------
+----------------------
 
 myTerminal = "kitty"
 
@@ -84,27 +88,38 @@ myHalfLock = "xtrlock-pam"
 -- what you'd like to capture on the screen.
 mySelectScreenshot = "maim -s ~/shots/$(date +%Y-%m-%d_%T).png"
 
+-- Take screenshot and copy to clipboard
+myClipboardScreenshot = "maim -i $(xdotool getactivewindow) | xclip -selection clipboard -t image/png"
+
 -- The command to take a fullscreen screenshot.
 myScreenshot = "maim > ~/shots/$(date +%Y-%m-%d_%T).png"
 
 myDelayedScreenshot = "maim -d3 ~/shots/$(date +%Y-%m-%d_%T).png"
+
+myActiveWindowScreenshot = "maim -i $(xdotool getactivewindow) > ~/shots/$(date +%Y-%m-%d_%T).png"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
 myLauncher = "rofi -lines 7 -columns 2 -modi run -show"
 mySshLauncher = "rofi -lines 7 -columns 2 -modi ssh -show"
 
-------------------------------------------------------------------------
-    -- workspaces
+myRandomWallpaper = "~/.cargo/bin/rrbg"
 
-myWorkspaces = ["web", "2", "3", "4", "5", "6", "7", "8", "9"] ++ map show [11.999]
+----------------
+-- workspaces --
+----------------
+--myWorkspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] ++ map show [11.999]
+
+-- Workspaces with single-character names that can be keyed in with no modifiers.
+simpleWorkspaces :: [X.WorkspaceId]
+simpleWorkspaces = [[w] | w <- "1234567890-="]
 
 kill8 ss | Just w <- W.peek ss = W.insertUp w $ W.delete w ss
   | otherwise = ss
 
-------------------------------------------------------------------------
-    -- layouts
-
+-------------
+-- layouts --
+-------------
 tabbedLayout = tabbed shrinkText tabbedConf
 
 tabbedConf = def
@@ -114,8 +129,9 @@ tabbedConf = def
 
 genericLayouts =
     avoidStruts $ smartBorders $
-        tall ||| Mirror tall||| tabbedLayout ||| noBorders (fullscreenFull Full) ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100)) ||| Accordion ||| Roledex
-            where tall = Tall 1 (3/100) (1/2)
+        tall ||| Mirror tall||| tabbedLayout ||| noBorders (fullscreenFull Full) ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100)) ||| Accordion ||| Roledex ||| rTall
+            where tall  = Tall 1 (3/100) (1/2) 
+                  rTall = ResizableTall 1 (3/100) (1/2) []
 
 chrissoundLayouts = 
     desktopLayoutModifiers . smartBorders $
@@ -129,31 +145,20 @@ chrissoundLayouts =
 
 myLayouts = ifWider 3000 (chrissoundLayouts) genericLayouts
 
-------------------------------------------------------------------------
-    -- window rules
-
---myManageHook = scratchpadManageHookDefault <+>
-    --(composeAll . concat $
-        --[ [ className =? c --> doFloat | c <- floats] ,
-      --[ className =? w --> moveTo "web" | w <- webs] ,
-      --[ className =? "slack"         --> moveTo "im"
-        --] ])
-      --where floats = ["MPlayer", ".", "feh"]
-            --webs   = ["google-chrome-bin", "chromium-browser", "chromium", "chrome"]
-            --moveTo = doF . W.shift
-
+------------------
+-- window rules --
+------------------
 myManageHook = composeAll [
-      className =? "Chromium" --> doShift "web"
+    className =? "Chromium" --> doShift "web"
   , className =? "Firefox"  --> doShift "web"
   , resource  =? "desktop_window" --> doIgnore
-      {-, className =? "Steam"          --> doFloat-}
   , className =? "stalonetray"    --> doIgnore
-    --, className =? "slack"          --> doShift "social"
-      , isFullscreen --> doFullFloat
+  , isFullscreen --> doFullFloat
                           ]
 
---------------------------------------------
-    -- key bindings
+------------------
+-- key bindings --
+------------------
 
 myModMask = mod4Mask
 
@@ -183,11 +188,19 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
     , ((modMask .|. shiftMask, xK_p),
      spawn mySelectScreenshot)
   -- Take a full screenshot using the command specified by myScreenshot.
-    , ((modMask .|. controlMask .|. shiftMask, xK_p),
+    --, ((modMask .|. controlMask .|. shiftMask, xK_p),
+    , ((modMask, xK_Print),
      spawn myScreenshot)
   -- Take a full screenshot using the command specified by myScreenshot - with a delay.
     , ((modMask .|. controlMask .|. shiftMask, xK_l),
      spawn myDelayedScreenshot)
+  -- Take a screenshot of the current window and save it to the clipboard using the command specified by myClipboardScreenshot.
+    , ((modMask .|. controlMask .|. shiftMask, xK_c),
+     spawn myClipboardScreenshot)
+  -- Take a screenshot of the current window
+    , ((mod2Mask .|. controlMask, xK_p),
+
+    spawn myActiveWindowScreenshot)
   -- Mute volume.
     , ((modMask .|. controlMask, xK_m),
      spawn "amixer -q set Master toggle")
@@ -209,10 +222,13 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
   -- Eject CD tray.
     , ((0, 0x1008FF2C),
      spawn "eject -T")
+  -- Randomize Wallpaper
+    , ((modMask .|. controlMask .|. shiftMask, xK_r),
+    spawn myRandomWallpaper)
 
---------------------------------------------------------------------
-    -- "Standard" xmonad key bindings
---
+------------------------------------
+-- "Standard" xmonad key bindings --
+------------------------------------
 
   -- Close focused window.
     , ((modMask .|. shiftMask, xK_c),
@@ -294,6 +310,14 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 
   -- toggle fullscreen
     , ((modMask .|. shiftMask, xK_f), sendMessage ToggleStruts)
+
+  -- rename workspace
+    , ((modMask .|. shiftMask, xK_r), WSN.renameWorkspace def)
+
+    , ((modMask, xK_Left),   sendMessage MirrorExpand)
+    , ((modMask, xK_Up),     sendMessage MirrorExpand)
+    , ((modMask, xK_Right),  sendMessage MirrorShrink)
+    , ((modMask, xK_Down),   sendMessage MirrorShrink)
   ]
   ++
 
@@ -301,7 +325,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
   -- mod-shift-[1..9], Move client to workspace N
   [((m .|. modMask, k), windows $ f i)
     | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+    , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
   ++
 
@@ -309,12 +333,15 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
     | (k, sc) <- zip [xK_w, xK_e, xK_r] [0..]
     , (f, m) <- [(viewScreen, 0), (sendToScreen, shiftMask)]]
 
---------------------------------------------
-    -- Startup hook
+------------------
+-- Startup hook --
+------------------
 
 myStartupHook :: X()
-myStartupHook =
-    spawnOnce "/home/evanjs/.screenlayout/default.sh && rbg.py && /home/evanjs/.local/bin/my-taffybar"
+myStartupHook = do
+    Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
+    spawnOnce "/home/evanjs/.screenlayout/default2.sh && /home/evanjs/.cargo/bin/rrbg"
+    --spawnOnce "/home/evanjs/.screenlayout/default2.sh && rrbg #1&& /home/evanjs/.local/bin/my-taffybar"
 
 
 xmobarCreator :: Bars.DynamicStatusBar
@@ -324,39 +351,36 @@ xmobarDestroyer :: Bars.DynamicStatusBarCleanup
 xmobarDestroyer = return ()
 
 --------------------------------------------
-    --xmobarPP' = xmobarPP {
-    --ppSort = mkWsSort getXineramaPhysicalWsCompare
---}
-    --where dropIx wsId = if ':' `elem` wsId then drop 2 wsId else wsId
---------------------------------------------
+xmobarPP' = xmobarPP {
+  ppSort = mkWsSort getXineramaPhysicalWsCompare
+}
+  where dropIx wsId = if ':' `elem` wsId then drop 2 wsId else wsId
+---------------------------------------------------
+-- Rename the workspace and do some bookkeeping. --
+---------------------------------------------------
+renameWorkspace :: X.WorkspaceId -> X.X ()
+renameWorkspace w = X.withWindowSet $ \ws -> do
+  let c = W.tag . W.workspace . W.current $ ws
+  DynaW.renameWorkspaceByName w
+  -- Make sure that we're not left without one of the simple workspaces.
+  when (c `elem` simpleWorkspaces) $ DynaW.addHiddenWorkspace c
 
-
---------------------------------------------
--- Navigation2D
---navSetting :: XConfig a -> XConfig a
-navSetting = 
-  navigation2D
-  def
-  (xK_Up, xK_Left, xK_Down, xK_Right)
-  [(myModMask, windowGo),
-   (myModMask .|. shiftMask, windowSwap)]
-  False
-
---------------------------------------------
-    -- config
---
-
+------------
+-- config --
+------------
 evanjsConfig = 
-  navSetting $ def {
-    terminal    = "kitty"
-  , manageHook  = manageDocks <+> myManageHook
-  , modMask     = myModMask
-  , logHook     = Bars.multiPP xmobarPP xmobarPP
-  , layoutHook  = myLayouts
-  , workspaces  = myWorkspaces
-  , startupHook = myStartupHook
-  , keys        = myKeys
-  , handleEventHook = H.fullscreenEventHook
+  --navSetting $
+    H.ewmh $
+    def {
+      terminal    = "kitty"
+    , manageHook  = manageDocks <+> myManageHook
+    , modMask     = myModMask
+    , logHook     = Bars.multiPP xmobarPP' xmobarPP'
+    , layoutHook  = myLayouts
+    , workspaces  = simpleWorkspaces
+    , startupHook = myStartupHook
+    , keys        = myKeys
+    , handleEventHook = H.fullscreenEventHook
     }
 
 

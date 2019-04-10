@@ -13,8 +13,8 @@ executable my-xmonad
                      , XMonad.Layout.WindowColumn
                      , XMonad.Layout.MasterOverlay
   build-depends:       base
-                     , xmonad >= 0.13
-                     , xmonad-contrib >= 0.13
+                     , xmonad >= 0.15
+                     , xmonad-contrib >= 0.15
                      , containers
                      , mtl
                      , lens

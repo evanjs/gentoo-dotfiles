@@ -11,7 +11,8 @@ Config {
     -- layout
     , sepChar =  "%"   -- delineator between plugin names and straight text
     , alignSep = "}{"  -- separator between left-right alignment
-    , template = "%StdinReader% }{ Updates: %ups% | %battery% | %multicpu% | %coretemp% | %memory% | %default:Master% | %dynnetwork% | %KTVC% | %date% || %kbd% "
+    -- , template = "%StdinReader% }{ Updates: %ups% | %battery% | %multicpu% | %coretemp% | %memory% | %default:Master% | %dynnetwork% | %KTVC% | %date% || %kbd% "
+    , template = "%StdinReader% }{ %battery% | %multicpu% | %coretemp% | %memory% | %default:Master% | %dynnetwork% | %KTVC% | %date% || %kbd% "
 
     -- general behavior
     , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -103,7 +104,7 @@ Config {
       , ("us"         , "<fc=#8B0000>US</fc>")
       ]
       , Run StdinReader
-      , Run Com "ecount" [] "ups" 3600
+      -- , Run Com "ecount" [] "ups" 3600
       , Run Volume "default" "Master" [] 1
       ]
 }

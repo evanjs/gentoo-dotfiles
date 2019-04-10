@@ -122,11 +122,11 @@ kill8 ss | Just w <- W.peek ss = W.insertUp w $ W.delete w ss
 ------------------------------------------------------------------------
     --gaps, etc
 ------------------------------------------------------------------------
-  mySpacing             = spacing gap
-  sGap                  = quot gap 2
-  myGaps                = gaps [(U, gap),(D, gap),(L, gap),(R, gap)]
-  mySmallGaps           = gaps [(U, sGap),(D, sGap),(L, sGap),(R, sGap)]
-  myBigGaps             = gaps [(U, gap*2),(D, gap*2),(L, gap*2),(R, gap*2)]
+  --mySpacing             = spacing gap
+  --sGap                  = quot gap 2
+  --myGaps                = gaps [(U, gap),(D, gap),(L, gap),(R, gap)]
+  --mySmallGaps           = gaps [(U, sGap),(D, sGap),(L, sGap),(R, sGap)]
+  --myBigGaps             = gaps [(U, gap*2),(D, gap*2),(L, gap*2),(R, gap*2)]
 
 
 -------------

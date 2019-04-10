@@ -6,12 +6,12 @@
 -- Distributed under terms of the MIT license.
 --
 
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE StandaloneDeriving    #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE LambdaCase #-}
-{-# OPTIONS -Wno-incomplete-patterns #-}
+    {-# LANGUAGE FlexibleInstances     #-}
+        {-# LANGUAGE MultiParamTypeClasses #-}
+            {-# LANGUAGE StandaloneDeriving    #-}
+                {-# LANGUAGE DeriveDataTypeable #-}
+                    {-# LANGUAGE LambdaCase #-}
+                        {-# OPTIONS -Wno-incomplete-patterns #-}
 
 import Control.Monad ((>=>), join, liftM, when)
 
@@ -116,6 +116,18 @@ simpleWorkspaces = [[w] | w <- "1234567890-="]
 
 kill8 ss | Just w <- W.peek ss = W.insertUp w $ W.delete w ss
   | otherwise = ss
+  
+
+
+------------------------------------------------------------------------
+    --gaps, etc
+------------------------------------------------------------------------
+  mySpacing             = spacing gap
+  sGap                  = quot gap 2
+  myGaps                = gaps [(U, gap),(D, gap),(L, gap),(R, gap)]
+  mySmallGaps           = gaps [(U, sGap),(D, sGap),(L, sGap),(R, sGap)]
+  myBigGaps             = gaps [(U, gap*2),(D, gap*2),(L, gap*2),(R, gap*2)]
+
 
 -------------
 -- layouts --
@@ -133,15 +145,15 @@ genericLayouts =
             where tall  = Tall 1 (3/100) (1/2) 
                   rTall = ResizableTall 1 (3/100) (1/2) []
 
-chrissoundLayouts = 
+chrissoundLayouts =
     desktopLayoutModifiers . smartBorders $
-    mkToggle ((NOBORDERS ?? FULL ?? EOT)) (
-      spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 2 0.2 defaultThreeColumn) |||
-      spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 2 0.5 defaultThreeColumn) |||
-      spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 3 0.75 (0.27333, 0.45333, 0.27333)) |||
-      spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 3 0.75 (0.33333, 0.33333, 0.33333)) |||
-      spacing 0 (noBorders (fullscreenFull Full))
-      )
+      mkToggle ((NOBORDERS ?? FULL ?? EOT)) (
+        spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 2 0.2 defaultThreeColumn) |||
+        spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 2 0.5 defaultThreeColumn) |||
+        spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 3 0.75 (0.27333, 0.45333, 0.27333)) |||
+        spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 3 0.75 (0.33333, 0.33333, 0.33333)) |||
+        spacing 0 (noBorders (fullscreenFull Full))
+                                              )
 
 myLayouts = ifWider 3000 (chrissoundLayouts) genericLayouts
 
@@ -226,9 +238,14 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
     , ((modMask .|. controlMask .|. shiftMask, xK_r),
     spawn myRandomWallpaper)
 
-------------------------------------
--- "Standard" xmonad key bindings --
-------------------------------------
+    , ((modMask, xF86XK_MonBrightnessUp), spawn "xbacklight -inc 1")
+    , ((modMask, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 1")
+    , ((modMask .|. shiftMask, xF86XK_MonBrightnessUp), spawn "xbacklight -inc 10")
+    , ((modMask .|. shiftMask, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 10")
+
+--------------------------------------------------------------------
+    -- "Standard" xmonad key bindings
+--
 
   -- Close focused window.
     , ((modMask .|. shiftMask, xK_c),

@@ -50,6 +50,8 @@ extra-deps: [
     X11-1.8,
     xml-helpers-1.0.0,
     xmobar-0.28.1,
+    xmonad-wallpaper-0.0.1.4,
+    magic-1.1
   ]
 
 # Override default flag values for local packages and extra-deps
@@ -94,3 +96,6 @@ nix:
                 - xorg.libXrandr
                 - xorg.libXrender
                 - xorg.libXft
+                - haskellPackages.xmonad-wallpaper
+                - haskellPackages.magic
+                - file

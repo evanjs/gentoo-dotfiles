@@ -55,6 +55,8 @@ import XMonad.Util.Scratchpad
 import XMonad.Util.SpawnOnce
 import XMonad.Util.WorkspaceCompare
 
+import XMonad.Wallpaper
+
 import qualified Data.Map                   as M
 import qualified XMonad.Hooks.EwmhDesktops  as H
 import qualified XMonad.StackSet            as W
@@ -400,5 +402,7 @@ evanjsConfig =
     , handleEventHook = H.fullscreenEventHook
     }
 
+main = do 
+    setRandomWallpaper ["/mnt/gentoo/usr/share/wallpapers/custom"]
+    xmonad =<< xmobar evanjsConfig
 
-main = xmonad =<< xmobar evanjsConfig

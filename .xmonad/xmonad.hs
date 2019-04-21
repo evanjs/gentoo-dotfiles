@@ -6,12 +6,12 @@
 -- Distributed under terms of the MIT license.
 --
 
-    {-# LANGUAGE FlexibleInstances     #-}
-        {-# LANGUAGE MultiParamTypeClasses #-}
-            {-# LANGUAGE StandaloneDeriving    #-}
-                {-# LANGUAGE DeriveDataTypeable #-}
-                    {-# LANGUAGE LambdaCase #-}
-                        {-# OPTIONS -Wno-incomplete-patterns #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE StandaloneDeriving    #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE LambdaCase #-}
+{-# OPTIONS -Wno-incomplete-patterns #-}
 
 import Control.Monad ((>=>), join, liftM, when)
 
@@ -39,6 +39,7 @@ import XMonad.Hooks.UrgencyHook
 
 import XMonad.Layout.Accordion
 import XMonad.Layout.Fullscreen
+import XMonad.Layout.Grid as XG
 import XMonad.Layout.GridVariants
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.NoBorders
@@ -143,7 +144,15 @@ tabbedConf = def
 
 genericLayouts =
     avoidStruts $ smartBorders $
-        tall ||| Mirror tall||| tabbedLayout ||| noBorders (fullscreenFull Full) ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100)) ||| Accordion ||| Roledex ||| rTall
+        tall
+        ||| Mirror tall
+        ||| tabbedLayout
+        ||| noBorders (fullscreenFull Full)
+        ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100))
+        ||| Accordion
+        ||| Roledex
+        ||| XG.Grid
+        ||| rTall
             where tall  = Tall 1 (3/100) (1/2) 
                   rTall = ResizableTall 1 (3/100) (1/2) []
 

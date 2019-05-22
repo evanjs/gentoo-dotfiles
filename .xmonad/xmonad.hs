@@ -106,7 +106,7 @@ myActiveWindowScreenshot = "maim -i $(xdotool getactivewindow) > ~/shots/$(date 
 myLauncher = "rofi -lines 7 -columns 2 -modi run -show"
 mySshLauncher = "rofi -lines 7 -columns 2 -modi ssh -show"
 
-myRandomWallpaper = "~/.cargo/bin/rrbg"
+myRandomWallpaper = "rrbg"
 
 ----------------
 -- workspaces --
@@ -368,7 +368,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 myStartupHook :: X()
 myStartupHook = do
     Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
-    spawnOnce "/home/evanjs/.screenlayout/default2.sh && /home/evanjs/.cargo/bin/rrbg"
+    --spawn "rrbg"  -- using setRandomWallpaper for this
     --spawnOnce "/home/evanjs/.screenlayout/default2.sh && rrbg #1&& /home/evanjs/.local/bin/my-taffybar"
 
 

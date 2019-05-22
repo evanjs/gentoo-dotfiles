@@ -224,6 +224,13 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
     , ((mod2Mask .|. controlMask, xK_p),
 
     spawn myActiveWindowScreenshot)
+  ---------------------------------------------------------------------------
+  -- Media Key Shortcuts
+  ---------------------------------------------------------------------------
+    , ((0, xF86XK_AudioLowerVolume   ), spawn "amixer -q set Master 1%-")
+    , ((0, xF86XK_AudioRaiseVolume   ), spawn "amixer -q set Master 1%+")
+    , ((0, xF86XK_AudioMute          ), spawn "amixer -q set Master toggle")
+  ---------------------------------------------------------------------------
   -- Mute volume.
     , ((modMask .|. controlMask, xK_m),
      spawn "amixer -q set Master toggle")

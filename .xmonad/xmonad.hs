@@ -166,7 +166,7 @@ chrissoundLayouts =
         spacing 0 (noBorders (fullscreenFull Full))
                                               )
 
-myLayouts = ifWider 3000 (chrissoundLayouts ||| genericLayouts) genericLayouts
+myLayouts = ifWider 3000 (genericLayouts ||| chrissoundLayouts) genericLayouts
 
 ------------------
 -- window rules --

@@ -60,6 +60,9 @@ import XMonad.Wallpaper
 
 import qualified Data.Map                   as M
 import qualified XMonad.Hooks.EwmhDesktops  as H
+import qualified XMonad.Prompt              as P
+import qualified XMonad.Actions.Submap      as SM
+import qualified XMonad.Actions.Search      as S
 import qualified XMonad.StackSet            as W
 import qualified XMonad                     as X
 
@@ -260,6 +263,9 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
     , ((modMask, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 1")
     , ((modMask .|. shiftMask, xF86XK_MonBrightnessUp), spawn "xbacklight -inc 10")
     , ((modMask .|. shiftMask, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 10")
+
+    , ((modMask, xK_s), SM.submap $ searchEngineMap $ S.promptSearch P.def)
+    , ((modMask .|. shiftMask, xK_s), SM.submap $ searchEngineMap $ S.selectSearch)
 
 --------------------------------------------------------------------
     -- "Standard" xmonad key bindings

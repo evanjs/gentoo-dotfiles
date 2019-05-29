@@ -122,8 +122,16 @@ simpleWorkspaces = [[w] | w <- "1234567890-="]
 
 kill8 ss | Just w <- W.peek ss = W.insertUp w $ W.delete w ss
   | otherwise = ss
-  
 
+
+------------
+-- Search --
+------------
+searchEngineMap method = M.fromList $
+    [ ((0, xK_g), method S.google)
+    , ((0, xK_h), method S.hoogle)
+    , ((0, xK_w), method S.wikipedia)
+    ]
 
 ------------------------------------------------------------------------
     --gaps, etc

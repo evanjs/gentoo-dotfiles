@@ -1,7 +1,7 @@
 name:                my-taffybar
 version:             0.1.0.0
-author:              author
-maintainer:          email@email.com
+author:              Evan Stoll
+maintainer:          evanjsx@gmail.com
 build-type:          Simple
 cabal-version:       >=1.10
 

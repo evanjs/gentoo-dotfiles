@@ -18,7 +18,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: lts-11.15
+resolver: lts-13.24
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -40,18 +40,39 @@ packages:
 # (e.g., acme-missiles-0.3)
 # extra-deps: []
 extra-deps: [
+    broadcast-chan-0.2.0.2,
     containers-0.5.11.0,
-    dbus-1.0.1,
+    ConfigFile-1.1.4,
+    dbus-1.2.1,
     dbus-hslogger-0.1.0.1,
-    rate-limit-1.4.0,
+    gi-cairo-connector-0.0.1,
+    gi-cairo-render-0.0.1,
+    gi-dbusmenu-0.4.1,
+    gi-dbusmenugtk3-0.4.1,
+    gi-gdk-3.0.15,
+    gi-gdkpixbuf-2.0.18,
+    gi-gdkx11-3.0.4,
+    gi-gio-2.0.18,
+    gi-gtk-3.0.26,
+    gi-gtk-hs-0.3.6.3,
+    gi-pango-1.0.16,
+    gi-xlib-2.0.2,
+    gtk-sni-tray-0.1.6.0,
+    gtk-strut-0.1.3.0,
+    haskell-gi-0.21.2,
+    haskell-gi-base-0.21.2,
+    magic-1.1,
+    rate-limit-1.4.1,
     spool-0.1,
-    status-notifier-item-0.2.2.1,
+    status-notifier-item-0.3.0.1,
     time-units-1.0.0,
+    taffybar-3.2.0,
     X11-1.8,
+    X11-xft-0.3.1,
     xml-helpers-1.0.0,
     xmobar-0.28.1,
+    xmonad-0.15,
     xmonad-wallpaper-0.0.1.4,
-    magic-1.1
   ]
 
 # Override default flag values for local packages and extra-deps
@@ -85,17 +106,29 @@ nix:
         enable: true
         pure: false
         packages:
+                - cairo
+                - file
                 - gcc
+                - gnome2.pango
+                - gnome3.gtk
+                - gobjectIntrospection
+                - gtk2-x11
+                - gtk3
+                - haskellPackages.magic
+                - haskellPackages.xmonad-wallpaper
+                - libdbusmenu-glib
+                - libdbusmenu-gtk3
                 - libxml2
                 - pkgconfig
+                - taffybar
                 - upower
                 - x11
                 - xorg.libX11
                 - xorg.libXext
+                - xorg.libXft
                 - xorg.libXinerama
                 - xorg.libXrandr
                 - xorg.libXrender
-                - xorg.libXft
-                - haskellPackages.xmonad-wallpaper
-                - haskellPackages.magic
-                - file
+                - xorg.libXScrnSaver
+                - zlib
+                - taffybar

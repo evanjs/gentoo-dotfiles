@@ -5,13 +5,14 @@ cabal-version:       >=1.10
 
 executable my-xmonad
   main-is:             ../xmonad.hs
-  -- other-modules lists custom modules in my ~/.xmonad/lib/ directory
-  other-modules:       XMonad.Util.WindowFinder
-                     , XMonad.Util.FileLogger
-                     , XMonad.Layout.FocusWindow
+  other-modules:
+                       XMonad.Layout.FocusWindow
                      , XMonad.Layout.MiddleColumn
                      , XMonad.Layout.WindowColumn
                      , XMonad.Layout.MasterOverlay
+                     , XMonad.Util.FileLogger
+                     , XMonad.Util.WindowFinder
+
   build-depends:       base
                      , xmonad >= 0.15
                      , xmonad-contrib >= 0.15
@@ -21,8 +22,10 @@ executable my-xmonad
                      , mtl
                      , lens
                      , X11
+                     , process
+                     , taffybar
   hs-source-dirs:      lib
   default-language:    Haskell2010
-  -- -Wall
-  ghc-options:         -Werror -fno-warn-missing-signatures -threaded
+  -- ghc-options:         -Werror -fno-warn-missing-signatures -threaded
+  ghc-options:       -O2 -threaded
 

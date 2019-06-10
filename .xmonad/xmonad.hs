@@ -175,8 +175,7 @@ chrissoundLayouts =
         spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 2 0.5 defaultThreeColumn) |||
         spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 3 0.75 (0.27333, 0.45333, 0.27333)) |||
         spacing 6 (ModifiedLayout (MasterOverlay Nothing) $ getMiddleColumnSaneDefault 3 0.75 (0.33333, 0.33333, 0.33333)) |||
-        spacing 0 (noBorders (fullscreenFull Full))
-                                              )
+        spacing 0 (noBorders (fullscreenFull Full)))
 
 myLayouts = ifWider 3000 (genericLayouts ||| chrissoundLayouts) genericLayouts
 
@@ -390,8 +389,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 myStartupHook :: X()
 myStartupHook = do
     Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
-    --spawn "rrbg"  -- using setRandomWallpaper for this
-    --spawnOnce "/home/evanjs/.screenlayout/default2.sh && rrbg #1&& /home/evanjs/.local/bin/my-taffybar"
+    spawnOnce "/home/evanjs/.local/bin/my-taffybar"
 
 
 xmobarCreator :: Bars.DynamicStatusBar

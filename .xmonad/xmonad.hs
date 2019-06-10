@@ -18,6 +18,7 @@ import Control.Monad ((>=>), join, liftM, when)
 import Graphics.X11.ExtraTypes.XF86
 import System.Exit
 import System.IO
+import System.Taffybar.Support.PagerHints (pagerHints)
 
 import XMonad
 import XMonad.Actions.DynamicWorkspaces as DynaW
@@ -418,8 +419,8 @@ renameWorkspace w = X.withWindowSet $ \ws -> do
 -- config --
 ------------
 evanjsConfig = 
-  --navSetting $
     H.ewmh $
+    pagerHints $
     def {
       terminal    = "kitty"
     , manageHook  = manageDocks <+> myManageHook

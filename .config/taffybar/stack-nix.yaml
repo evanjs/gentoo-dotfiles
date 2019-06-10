@@ -1,49 +1,38 @@
 packages:
 - .
 - location: './taffybar'
-  #extra-dep: true
 - location:
-    git: https://github.com/willdonnelly/dyre
-    commit: 11412752b483135e0c151ab90be17b217f837c4b
-    #extra-dep: true
+      git: https://github.com/willdonnelly/dyre
+      commit: 11412752b483135e0c151ab90be17b217f837c4b
 extra-deps:
-      - X11-xft-0.3.1
-      - dbus-1.0.1
-      - dbus-hslogger-0.1.0.1
-      - gi-dbusmenu-0.4.1
-      - gi-dbusmenugtk3-0.4.1
-      - gi-gdk-3.0.15
-      - gi-gdkpixbuf-2.0.16
-      - gi-gdkx11-3.0.4
-      - gi-gio-2.0.16
-      - gi-gtk-3.0.21
-      - gi-gtk-hs-0.3.6.1
-      - gi-pango-1.0.16
-      - gi-xlib-2.0.2
-      - gio-0.13.4.1
-      - gtk-sni-tray-0.1.5.0
-      - gtk-strut-0.1.2.1
-      - gtk-traymanager-1.0.1
-      - gtk3-0.14.9
-      - haskell-gi-0.21.2
-      - haskell-gi-base-0.21.1
-      - libxml-sax-0.7.5
-      - rate-limit-1.1.1
-      - spool-0.1
-      - status-notifier-item-0.3.0.0
-      - time-units-1.0.0
-      - xml-helpers-1.0.0
-      - process-1.6.3.0
-      - bytestring-0.10.8.2
-      - download-curl-0.1.4
-      - gi-glib-2.0.17
-      - gi-cairo-connector-0.0.1@sha256:b909fcfcb3c19fceb93ea309381c059020e9b9ae8d1fc39aad94962e112fc289
-      - gi-cairo-render-0.0.1@sha256:a56ff8a2b30f60b62113fe9a9c68cda583d3da4d75f13c8781d4aa211fc99410
-resolver: lts-11.2
+    - broadcast-chan-0.2.0.2@sha256:687a7438a3fda6f5baf2be5a97e8dbf07b0bce1c22319af0d734ab64a895dd8f
+    - cairo-0.13.6.0@sha256:a9122d48957a2dbb5a177e5068b850efa1e99bb22c68eb2571165c3c945a8dd6
+    - ConfigFile-1.1.4@sha256:ca56261e1deae6ef958a337b03812987bfd94ab37b047e27f262bc3137813165
+    - dbus-hslogger-0.1.0.1@sha256:7c989216bfbd9dce7e6898e608efff13d7385d0e9cf4b5aa8c8e0358b72645be
+    - gi-cairo-connector-0.0.1@sha256:b909fcfcb3c19fceb93ea309381c059020e9b9ae8d1fc39aad94962e112fc289
+    - gi-cairo-render-0.0.1@sha256:a56ff8a2b30f60b62113fe9a9c68cda583d3da4d75f13c8781d4aa211fc99410
+    - gi-dbusmenu-0.4.1
+    - gi-dbusmenugtk3-0.4.1
+    - gi-gdkx11-3.0.4
+    - gio-0.13.6.0@sha256:00fce1b49c902ba82433cc018fb5d4651797464342a9cbc66df2c62bb8884650
+    - gi-xlib-2.0.2
+    - glib-0.13.7.0@sha256:25f62eb48d104342537dd1c724f07355d56226ca595ce6f1848415fbb7f59fa7
+    - gtk2hs-buildtools-0.13.5.0@sha256:a765766c4208a3e4def319ebf280fbb9e7d0a3f28d15922db36970404fb1daee
+    - gtk3-0.15.1@sha256:86cdd17df569aa641835e5bcae304bc405aa397469888a0540860cfc050b788d
+    - gtk-sni-tray-0.1.6.0@sha256:c9d355a67f459431c377f628a4853b1ed9a50e6591eceb76b1189b735aa765da
+    - gtk-strut-0.1.3.0@sha256:a1ad2b79d5c581366062278fd43db7fbc8b703cc156bacbcf3b94dc57dea7811
+    - pango-0.13.6.0@sha256:ed8d300945bea97ccb652efc73d159634aefebff8c64f60eef6b6ac5ecebc4ae
+    - rate-limit-1.4.1@sha256:27abe882e8b7851202cac124ea2b631e77ab7216f7a655b0782704838fe3c305
+    - spool-0.1@sha256:77780cbfc2c0be23ff2ea9e474062f3df97fcd9db946ee0b3508280a923b83e2
+    - status-notifier-item-0.3.0.1@sha256:7c11ba0158f31eda7cb8c60c48b6e4f63681b79a91a3c2814fac381f0004ebc5
+    - time-units-1.0.0@sha256:27cf54091c4a0ca73d504fc11d5c31ab4041d17404fe3499945e2055697746c1
+    - xml-helpers-1.0.0@sha256:3b0808db529fa362a67717c78a78a4728859f60f31e9213ae2d32720fbe053a1
+allow-newer: true
+resolver: lts-13.24
 nix:
-  enable: true
-  pure: false
-  packages:
+    enable: true
+    pure: false
+    packages:
         - gcc
         - libxml2
         - pkgconfig
@@ -54,29 +43,32 @@ nix:
         - xorg.libXinerama
         - xorg.libXrandr
         - xorg.libXrender
+        - xorg.libXScrnSaver
         - xorg.libXft
         - curl
         - gobjectIntrospection
         - cairo
         - pango
         - gtk3
+        - glib
         - libdbusmenu-glib
         - libdbusmenu-gtk3
         - zlib
+        - xmonad-with-packages
         - hicolor-icon-theme
-        #- haskellPackages.gi-atk
-        #- haskellPackages.gi-cairo
-        #- haskellPackages.gi-dbusmenu
-        #- haskellPackages.gi-dbusmenugtk3
-        #- haskellPackages.gi-gdk
-        #- haskellPackages.gi-gdkpixbuf
-        #- haskellPackages.gi-gio
-        #- haskellPackages.gi-glib
-        #- haskellPackages.gi-gobject
-        #- haskellPackages.gi-gtk
-        #- haskellPackages.gi-gtk-hs
-        #- haskellPackages.gi-pango
-        #- haskellPackages.gi-xlib
-        #- haskellPackages.gtk-sni-tray
-        #- haskellPackages.gtk-strut
+        - haskellPackages.gi-atk
+        - haskellPackages.gi-cairo
+        - haskellPackages.gi-dbusmenu
+        - haskellPackages.gi-dbusmenugtk3
+        - haskellPackages.gi-gdk
+        - haskellPackages.gi-gdkpixbuf
+        - haskellPackages.gi-gio
+        - haskellPackages.gi-glib
+        - haskellPackages.gi-gobject
+        - haskellPackages.gi-gtk
+        - haskellPackages.gi-gtk-hs
+        - haskellPackages.gi-pango
+        - haskellPackages.gi-xlib
+        - haskellPackages.gtk-sni-tray
+        - haskellPackages.gtk-strut
         - haskellPackages.haskell-gi

@@ -380,7 +380,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 
   [((m.|. modMask, k), f sc)
     | (k, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-    , (f, m) <- [(viewScreen, 0), (sendToScreen, shiftMask)]]
+    , (f, m) <- [(viewScreen def, 0), (sendToScreen def, shiftMask)]]
 
 ------------------
 -- Startup hook --
@@ -401,7 +401,7 @@ xmobarDestroyer = return ()
 
 --------------------------------------------
 xmobarPP' = xmobarPP {
-  ppSort = mkWsSort getXineramaPhysicalWsCompare
+  ppSort = mkWsSort $ getXineramaPhysicalWsCompare def
 }
   where dropIx wsId = if ':' `elem` wsId then drop 2 wsId else wsId
 ---------------------------------------------------

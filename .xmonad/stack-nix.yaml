@@ -120,7 +120,7 @@ nix:
                 - libdbusmenu-gtk3
                 - libxml2
                 - pkgconfig
-                - taffybar
+                #- taffybar
                 - upower
                 - x11
                 - xorg.libX11
@@ -131,4 +131,4 @@ nix:
                 - xorg.libXrender
                 - xorg.libXScrnSaver
                 - zlib
-                - taffybar
+                #- taffybar

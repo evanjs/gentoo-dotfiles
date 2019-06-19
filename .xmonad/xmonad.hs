@@ -389,7 +389,7 @@ myKeys conf@XConfig {XMonad.modMask = modMask} = M.fromList $
 myStartupHook :: X()
 myStartupHook = do
     Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
-    spawnOnce "/home/evanjs/.local/bin/my-taffybar"
+    spawnOnce "taffybar"
 
 
 xmobarCreator :: Bars.DynamicStatusBar

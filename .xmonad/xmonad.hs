@@ -163,7 +163,6 @@ genericLayouts =
         ||| noBorders (fullscreenFull Full)
         ||| (SplitGrid XMonad.Layout.GridVariants.L 2 3 (2/3) (16/10) (5/100))
         ||| Accordion
-        ||| Roledex
         ||| XG.Grid
         ||| rTall
             where tall  = Tall 1 (3/100) (1/2) 

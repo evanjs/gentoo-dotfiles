@@ -14,6 +14,7 @@
 {-# OPTIONS -Wno-incomplete-patterns #-}
 
 import Control.Monad ((>=>), join, liftM, when)
+import Data.Maybe (maybeToList)
 
 import Graphics.X11.ExtraTypes.XF86
 import System.Exit
@@ -189,6 +190,23 @@ myManageHook = composeAll [
   , className =? "stalonetray"    --> doIgnore
   , isFullscreen --> doFullFloat
                           ]
+
+
+addNETSupported :: Atom -> X ()
+addNETSupported x   = withDisplay $ \dpy -> do
+    r               <- asks theRoot
+    a_NET_SUPPORTED <- getAtom "_NET_SUPPORTED"
+    a               <- getAtom "ATOM"
+    liftIO $ do
+       sup <- (join . maybeToList) <$> getWindowProperty32 dpy a_NET_SUPPORTED r
+       when (fromIntegral x `notElem` sup) $
+         changeProperty32 dpy r a_NET_SUPPORTED a propModeAppend [fromIntegral x]
+
+addEWMHFullscreen :: X ()
+addEWMHFullscreen   = do
+    wms <- getAtom "_NET_WM_STATE"
+    wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
+    mapM_ addNETSupported [wms, wfs]
 
 ------------------
 -- key bindings --
@@ -427,7 +445,7 @@ evanjsConfig =
     , logHook     = Bars.multiPP xmobarPP' xmobarPP'
     , layoutHook  = myLayouts
     , workspaces  = simpleWorkspaces
-    , startupHook = myStartupHook
+    , startupHook = myStartupHook >> addEWMHFullscreen
     , keys        = myKeys
     , handleEventHook = H.fullscreenEventHook
     }

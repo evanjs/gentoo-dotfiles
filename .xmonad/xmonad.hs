@@ -390,6 +390,7 @@ myStartupHook :: X()
 myStartupHook = do
     Bars.dynStatusBarStartup xmobarCreator xmobarDestroyer
     spawnOnce "taffybar"
+    spawnOnce "autorandr -c && rrbg"
 
 
 xmobarCreator :: Bars.DynamicStatusBar
@@ -432,6 +433,6 @@ evanjsConfig =
     }
 
 main = do 
-    setRandomWallpaper ["/mnt/gentoo/usr/share/wallpapers/custom"]
+    --setRandomWallpaper ["/mnt/gentoo/usr/share/wallpapers/custom"]
     xmonad =<< xmobar evanjsConfig
 
